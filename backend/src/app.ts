@@ -23,6 +23,7 @@ import { services } from './services/index'
 import { channels } from './channels'
 
 const app: Application = express(feathers())
+// console.log(__dirname, app.get('public'), path.join(__dirname, '..', '..', 'frontend', 'dist'))
 
 // Load app configuration
 app.configure(configuration(configurationValidator))

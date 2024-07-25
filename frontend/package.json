@@ -4,12 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev:live": "vite",
+    "dev": "vite",
     "build": "tsc && vite build",
-    "dev": "tsc && vite build --watch",
+    "dev:watch": "tsc && vite build --watch",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "feathers-vite": "^1.2.7",
     "typescript": "^5.2.2",
     "vite": "^5.3.4"
   },
