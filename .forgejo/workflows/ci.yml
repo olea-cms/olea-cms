@@ -3,19 +3,33 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
-    paths: [ 'backend/**', '.forgejo/workflows/**' ]
+    # branches: [ main ]
+    paths: [ '**/**/package.json', 'backend/**', 'frontend/**', '.forgejo/workflows/**' ]
   pull_request:
-    branches: [ main ]
-    paths: [ 'backend' ]
+    # branches: [ main ]
+    paths: [ 'backend', 'frontend' ]
 
 jobs:
-  backend-test:
-    runs-on: bun
+  enforce-conventional-commit:
+    runs-on: docker
+    container: imbios/bun-node
     steps:
-      - name: Alias bun
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check commit msg
         run: |
-          alias node=bun
+          bun install
+          commit_message=$(git show -s --format=%s $GITHUB_SHA)
+          echo "Commit message:"
+          echo "$commit_message"
+          echo
+          echo "$commit_message" | bunx commitlint
+          
+  backend-test:
+    runs-on: docker
+    container: imbios/bun-node
+    steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -24,13 +38,20 @@ jobs:
           cd backend
           bun install
 
+      - name: Generate static files
+        run: |
+          cd frontend
+          bun install
+          bun run build
+
       - name: Run backend tests
         run: |
           cd backend
           bun test
 
   frontend-test:
-    runs-on: bun
+    runs-on: docker
+    container: imbios/bun-node
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

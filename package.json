@@ -3,6 +3,6 @@
     "version": "0.0.1",
     "workspaces": ["backend", "frontend"],
     "devDependencies": {
-
+        "@commitlint/config-conventional": "^19.2.2"
     }
 }
