@@ -36,6 +36,7 @@
   "main": "lib/client",
   "scripts": {
     "dev": "bun --watch src/index.ts",
+    "watch": "bun bun-watch",
     "compile": "shx rm -rf lib/ && tsc",
     "start": "node lib/",
     "prettier": "npx prettier \"**/*.ts\" --write",

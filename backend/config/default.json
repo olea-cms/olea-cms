@@ -1,7 +1,7 @@
 {
   "host": "localhost",
   "port": 3030,
-  "public": "../../frontend/dist/",
+  "public": "./views/",
   "origins": [
     "http://localhost:3030"
   ],

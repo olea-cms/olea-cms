@@ -17,6 +17,7 @@
           buildInputs = [
             pkgs.emacs
             pkgs.stdenv.cc.cc.lib
+            pkgs.inotify-tools
             pkgs.nodejs_20
             pkgs.nodePackages.typescript
             pkgs.nodePackages.typescript-language-server
