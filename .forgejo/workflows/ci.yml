@@ -1,0 +1,44 @@
+# .forgejo/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+  pull_request:
+    branches: [ main ]
+    - 'backend'
+
+jobs:
+  backend-test:
+    runs-on: oven/bun
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          bun install
+
+      - name: Run backend tests
+        run: |
+          cd backend
+          bun test
+
+  frontend-test:
+    runs-on: oven/bun
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          bun install
+
+      - name: Run frontend tests
+        run: |
+          cd frontend
+          bun test
