@@ -3,6 +3,7 @@ import assert from 'assert'
 import axios from 'axios'
 import type { Server } from 'http'
 import { app } from '../src/app'
+import { describe, beforeAll, afterAll, it } from 'bun:test'
 
 const port = app.get('port')
 const appUrl = `http://${app.get('host')}:${port}`
@@ -10,18 +11,17 @@ const appUrl = `http://${app.get('host')}:${port}`
 describe('Feathers application tests', () => {
   let server: Server
 
-  before(async () => {
+  beforeAll(async () => {
     server = await app.listen(port)
   })
 
-  after(async () => {
+  afterAll(async () => {
     await app.teardown()
   })
 
   it('starts and shows the index page', async () => {
     const { data } = await axios.get<string>(appUrl)
-
-    assert.ok(data.indexOf('<html lang="en">') !== -1)
+    assert.ok(data.indexOf('<!DOCTYPE html><html>') !== -1)
   })
 
   it('shows a 404 JSON error', async () => {

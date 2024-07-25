@@ -32,8 +32,11 @@ app.use(urlencoded({ extended: true }))
 // Host the public folder
 app.set('view engine', 'pug')
 // app.use('/', serveStatic(app.get('public')))
-// app.use('/', serveStatic(path.join(__dirname, '..', '..', 'frontend')))
-app.use('/', (req, res, next) => res.render('index', { title: 'CMS Home', message: 'Hello, Pug with feathers!' }))
+app.use('/', serveStatic(path.join(__dirname, '..', '..', 'frontend', 'dist')))
+// Our index and 404 pages will be written in pug but built by vite
+// app.use('/', (req, res, next) => {
+//   res.render('index', { title: 'CMS Home', message: 'Hello, Pug with feathers!' })
+// })
 
 // Configure services and real-time functionality
 app.configure(rest())
