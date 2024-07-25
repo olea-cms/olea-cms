@@ -11,7 +11,7 @@ on:
 
 jobs:
   backend-test:
-    runs-on: oven/bun
+    runs-on: bun
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -27,7 +27,7 @@ jobs:
           bun test
 
   frontend-test:
-    runs-on: oven/bun
+    runs-on: bun
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
