@@ -4,7 +4,7 @@ name: CI
 on:
   push:
     branches: [ main ]
-    paths: [ 'backend/**' ]
+    paths: [ 'backend/**', '.forgejo/workflows/**' ]
   pull_request:
     branches: [ main ]
     paths: [ 'backend' ]
