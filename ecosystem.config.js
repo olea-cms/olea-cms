@@ -3,7 +3,7 @@ module.exports = {
 		{
 			name: "frontend-watch",
 			script: "bun",
-			args: "run watch",
+			args: "run dev",
 			cwd: "./frontend",
 			env: {
 				NODE_ENV: "development",
