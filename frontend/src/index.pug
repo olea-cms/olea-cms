@@ -1,0 +1,17 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  link(rel='icon' type='image/svg+xml' href='/olea-cms-dalle-logo.webp')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  title #{ENV.OLEA_TITLE}
+body
+  div(x-data='navbar')
+  .m-auto(x-data='{ count: 0 }')
+    .mt-4.text-center
+      span.text-error.text-3xl(x-text='count')
+      .flex.justify-between.mt-4
+        button.btn.btn-primary(x-on:click='count--') Decrement
+        button.btn.btn-secondary(x-on:click='count++') Increment
+  include components/navbar/navbar.pug
+
+script(type='module' src='src/main.ts')

@@ -1,31 +1,21 @@
-import './style.css'
-// import typescriptLogo from './typescrip// t.svg'
-// import viteLogo from '/vite.svg'
-// import { setupCounter } from './counter.ts'
-import Alpine from 'alpinejs'
+import "./style.css";
 
-window.Alpine = Alpine
+import Alpine from "alpinejs";
+// import PineconeRouter from 'pinecone-router';
+import { themeChange } from "theme-change";
 
-Alpine.start()
+import Nav from "./components/navbar/navbar";
 
-console.log('sup reload? yunno');
+/** Alpine setup **/
+// Expose global
+(window as any).Alpine = Alpine;
+// Alpine.plugin(PineconeRouter);
 
-// document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-//   <div>
-//     <a href="https://vitejs.dev" target="_blank">
-//       <img src="${viteLogo}" class="logo" alt="Vite logo" />
-//     </a>
-//     <a href="https://www.typescriptlang.org/" target="_blank">
-//       <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-//     </a>
-//     <h1>Vite + TypeScript</h1>
-//     <div class="card">
-//       <button id="counter" type="button"></button>
-//     </div>
-//     <p class="read-the-docs">
-//       Click on the Vite and TypeScript logos to learn more
-//     </p>
-//   </div>
-// `
+/** Init components **/
+new Nav();
 
-// setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+//** Start alpine **/
+Alpine.start();
+
+/** Theme setup **/
+themeChange();

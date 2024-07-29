@@ -6,22 +6,47 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:copy": "bun run build && cp -r ./dist/* ../backend/public/",
     "watch:tsc": "tsc --watch --noEmit",
     "watch:build": "vite build --watch",
     "watch": "npm-run-all --parallel watch:tsc watch:build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:browser": "vitest --workspace=vitest.workspace.browser.ts # this isn't quite working"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.4.8",
+    "@types/alpinejs": "^3.13.10",
+    "@types/jest": "^29.5.12",
+    "@types/pug": "^2.0.10",
+    "@vitest/browser": "^2.0.4",
+    "@vitest/ui": "^2.0.4",
+    "daisyui": "^4.12.10",
     "feathers-vite": "^1.2.7",
+    "jsdom": "^24.1.1",
+    "msw": "^2.3.4",
     "npm-run-all": "^4.1.5",
+    "texsaur": "^1.0.2",
+    "tsc-prog": "^2.3.0",
     "typescript": "^5.2.2",
-    "vite": "^5.3.4"
+    "vite": "^5.3.4",
+    "vitest": "^2.0.4"
   },
   "dependencies": {
     "alpinejs": "^3.14.1",
     "autoprefixer": "^10.4.19",
+    "htmx.org": "2.0.1",
     "postcss": "^8.4.40",
+    "prettier": "^3.3.3",
     "tailwindcss": "^3.4.7",
+    "theme-change": "^2.5.0",
     "vite-plugin-pug-transformer": "^1.0.5"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

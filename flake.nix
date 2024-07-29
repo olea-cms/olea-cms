@@ -14,6 +14,7 @@
     {
       devShells = {
         default = pkgs.mkShell {
+	  nativeBuildInputs = [ pkgs.pkg-config ];
           buildInputs = [
             pkgs.emacs
             pkgs.stdenv.cc.cc.lib
@@ -31,7 +32,8 @@
             echo ""
             echo "Welcome to the OleaCMS backend development environment"
             eval "$(starship init bash)"
-            export LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib";
+            LD=$CC
+            export LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib:$LD_LIBRARY_PATH";
           '';
         };
       };

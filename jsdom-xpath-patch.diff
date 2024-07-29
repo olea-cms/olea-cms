@@ -1,0 +1,43 @@
+From 464c4d7e42f9cbc758ddeee897185d6aef35542b Mon Sep 17 00:00:00 2001
+From: "Daniel J. Rollins" <me@deej.io>
+Date: Mon, 20 May 2024 14:56:41 +0100
+Subject: [PATCH] Default type to XPathResult.ANY_TYPE in
+ XPathExpression.evaluate
+
+The whatwg living DOM spec states that the type argument should default
+to 0 (any): https://dom.spec.whatwg.org/#interface-xpathexpression.
+
+Whilst the IDL in the level 3 XPath spec doesn't state explicitly that
+the type parameter is optional, it does use the phrase "If a specific
+type is specified" which implies optionality:
+(https://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathExpression).
+Therefore, I believe this patch is spec-compliant on both counts.
+
+Fixes #3422
+---
+ lib/jsdom/level3/xpath.js | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/lib/jsdom/level3/xpath.js b/lib/jsdom/level3/xpath.js
+index 71da751e5..e23e8ea27 100644
+--- a/lib/jsdom/level3/xpath.js
++++ b/lib/jsdom/level3/xpath.js
+@@ -1718,6 +1718,9 @@ module.exports = core => {
+             core.DOMException.WRONG_DOCUMENT_ERR,
+             'The document must be the same as the context node\'s document.');
+       }
++      if (type === undefined) {
++        type = XPathResult.ANY_TYPE;
++      }
+       var evaluator = new Evaluator(doc);
+       var value = evaluator.val(this._ast, {nodes: [contextNode]});
+       if (XPathResult.NUMBER_TYPE === type)
+@@ -1735,7 +1738,7 @@ module.exports = core => {
+                XPathResult.FIRST_ORDERED_NODE_TYPE !== type)
+         throw new core.DOMException(
+             core.DOMException.NOT_SUPPORTED_ERR,
+-            'You must provide an XPath result type (0=any).');
++            'You must provide a valid XPath result type (0=any).');
+       else if (XPathResult.ANY_TYPE !== type &&
+                'object' !== typeof value)
+         throw new XPathException(

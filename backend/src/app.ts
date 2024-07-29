@@ -31,7 +31,7 @@ app.use(cors())
 app.use(json())
 app.use(urlencoded({ extended: true }))
 // Host the public folder
-app.set('view engine', 'pug')
+// app.set('view engine', 'pug')
 app.use('/', serveStatic(app.get('public')))
 // app.use('/', serveStatic(path.join(__dirname, '..', '..', 'frontend', 'dist')))
 // Our index and 404 pages will be written in pug but built by vite

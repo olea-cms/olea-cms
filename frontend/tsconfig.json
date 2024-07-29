@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
+    "jsx": "preserve",
+    "jsxFactory": "jsx",
+    "jsxFragmentFactory": "jsx.Fragment",
     "target": "ES2020",
     "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
+    "esModuleInterop": true,
 
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
@@ -14,11 +17,13 @@
     "moduleDetection": "force",
     "noEmit": true,
 
-    /* Linting */
+
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "types": ["@testing-library/jest-dom", "vitest/globals", "alpinejs"]
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["**/*.spec.*"]
 }

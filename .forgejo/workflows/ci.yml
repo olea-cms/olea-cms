@@ -42,12 +42,13 @@ jobs:
         run: |
           cd frontend
           bun install
+          cp .env.json.template .env.json 
           bun run build
 
       - name: Run backend tests
         run: |
           cd backend
-          bun test
+          bun test ./
 
   frontend-test:
     runs-on: docker
@@ -56,12 +57,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install dependencies & setup environment
         run: |
           cd frontend
           bun install
+          cp .env.json.template .env.json
+          # we need to patch jsdom's xpath implementation for htmx: https://github.com/jsdom/jsdom/pull/3719
+          cd ..
+          git apply --directory=node_modules/jsdom jsdom-xpath-patch.diff
 
       - name: Run frontend tests
         run: |
           cd frontend
-          bun test
+          bun run test
