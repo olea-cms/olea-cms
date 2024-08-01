@@ -23,7 +23,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["@vitest/globals", "@vitest/browser/providers/webdriverio"]
+    "types": ["vitest/globals", "@vitest/browser/providers/webdriverio"]
   },
   "include": ["src", "vitest.setup.ts"],
   "exclude": ["**/*.spec.*"]
