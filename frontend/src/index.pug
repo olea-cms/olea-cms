@@ -10,17 +10,20 @@ head
   script(type='module' src='src/main.ts')
   <script src="https://unpkg.com/@shaun/alpinejs-router@1.x.x/dist/cdn.min.js" defer></script>
 // we have to set x-data for pinecone router
-body(x-data)
+body#body(x-data)
   div(x-data='navbar')
   include components/navbar/navbar.pug
-  .m-auto(x-data='{ count: 0 }')
-    .mt-4.text-center
-      span.text-error.text-3xl(x-text='count')
-      .flex.justify-between.mt-4
-        button.btn.btn-primary(x-on:click='count--') Decrement
-        button.btn.btn-secondary(x-on:click='count++') Increment
 
   // routes
   include pages/login/index.pug
   template(x-route='notfound')
-    h1 No route match
+    div
+      h1 No route match
+      .m-auto(x-data='{ count: 0 }')
+        .mt-4.text-center
+          span.text-error.text-3xl(x-text='count')
+          .flex.justify-between.mt-4
+            button.btn.btn-primary(x-on:click='count--') Decrement
+            button.btn.btn-secondary(x-on:click='count++') Increment
+
+  div#app

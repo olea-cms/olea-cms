@@ -18,5 +18,9 @@
     "protobufjs"
   ],
   "type": "module",
-  "workspaces": ["backend", "frontend"]
+  "workspaces": ["backend", "frontend"],
+  "dependencies": {
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/prompt-cli": "^19.3.1"
+  }
 }
