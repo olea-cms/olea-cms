@@ -5,6 +5,7 @@ import { server } from "./mocks/node";
 // import "./tests/mockServiceWorker";
 import "./src/components/AlpineComponent?raw";
 import Alpine from "alpinejs";
+// @ts-ignore-error
 import htmx from "htmx.org";
 
 (window as any).Alpine = Alpine;
