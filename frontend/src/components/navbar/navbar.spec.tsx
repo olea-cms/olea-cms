@@ -1,44 +1,73 @@
-/// <reference lib="dom" />
-import { findByText, fireEvent } from "@testing-library/dom";
-import { pug, renderTemplate } from "../../../tests/utils";
+import "@testing-library/jest-dom";
+import { findByTestId, findByText, fireEvent } from "@testing-library/dom";
+import userEvent from "@testing-library/user-event";
+import { pug, htmxReprocess, renderTemplate } from "../../../tests/utils";
 
 // @ts-expect-error
 import navbarTemplate from "./navbar.pug?raw";
-import Navbar from './navbar';
+import Navbar from "./navbar";
 
-let template: string;
+let template: string = renderTemplate(navbarTemplate);
 
 beforeAll(() => {
-  template = renderTemplate(navbarTemplate);
-  
-  new Navbar();
+  const nav = new Navbar();
   // @ts-expect-error
   Alpine.start();
-})
-
-beforeEach(() => {
-  document.body.innerHTML = template;
-  document.body.appendChild(pug`div(x-data='navbar')`);
 });
 
-it('htmx test', async () => {
-  document.body.innerHTML = '';
-  document.body.appendChild(pug`
+describe("general environment", async () => {
+  it("htmx test", async () => {
+    document.body.innerHTML = "";
+    document.body.appendChild(pug`
 div
-  div(hx-get='/api/data' hx-target='#results' hx-trigger='load' hx-swap="#results")
-  #results
-  `);
+  #el(hx-get='/api/data' hx-target='#results' hx-trigger='load' hx-swap="#results")
+  #results`);
 
-  fireEvent.load(document.querySelector('[hx-get]')!);
+    fireEvent.click(document.querySelector("[hx-get]")!);
+    //     htmx.trigger("#el", "click");
+    expect(await findByText(document.body, "Server rendered pug")).toBeTruthy();
+  });
 
-  expect(await findByText(document.body, 'Server rendered pug')).toBeInTheDocument();
-})
+  it("alpine test", async () => {
+    document.body.innerHTML = "";
+    document.body.appendChild(pug`
+.m-auto(x-data='{ count: 0 }')
+  .mt-4.text-center
+    span.text-error.text-3xl(x-text='count')
+    .flex.justify-between.mt-4
+      button.btn.btn-primary(x-on:click='count--') Decrement
+      button.btn.btn-secondary(x-on:click='count++') Increment`);
 
-it("renders pug template", async () => {
-  expect(await findByText(document.body, "OleaCMS")).toBeInTheDocument();
+    fireEvent.click(await findByText(document.body, "Increment"));
+    expect(await findByText(document.body, "1")).toBeTruthy();
+    fireEvent.click(await findByText(document.body, "Increment"));
+    expect(await findByText(document.body, "2")).toBeTruthy();
+
+    fireEvent.click(await findByText(document.body, "Decrement"));
+    expect(await findByText(document.body, "1")).toBeTruthy();
+    fireEvent.click(await findByText(document.body, "Decrement"));
+    expect(await findByText(document.body, "0")).toBeTruthy();
+  });
 });
 
-it("renders categories correctly", async () => {
-  expect(await findByText(document.body, 'Cooking')).toBeInTheDocument();
-  expect(await findByText(document.body, 'Biking')).toBeInTheDocument();
+describe("navbar", async () => {
+  let navbar: Navbar;
+
+  beforeEach(() => {
+    document.body.innerHTML = template;
+    document.body.appendChild(pug`div(x-data='navbar')`);
+  });
+
+  it("renders title", async () => {
+    expect(await findByText(document.body, "OleaCMS Test")).toBeTruthy();
+  });
+
+  it("fetches categories on dropdown click", async () => {
+    htmxReprocess();
+    //     htmx.trigger("[data-testid='blog-dropdown']", "click");
+    // fireEvent.click(document.querySelector("#blogDropdown")!);
+    (window as any).htmx.trigger("#blogDropdown", "click");
+    expect(await findByText(document.body, "Cooking")).toBeTruthy();
+    expect(await findByText(document.body, "Biking")).toBeTruthy();
+  });
 });

@@ -22,7 +22,7 @@ const getAllMethods = (obj: any) => {
   return props;
 };
 
-export default class AlpineComponent {
+export default class AlpineComponent<T = {}> {
   /**
    * Utility class for creating components of sorts with alpinejs.
    *
@@ -31,7 +31,9 @@ export default class AlpineComponent {
    *
    * @beta
    */
-  constructor(dataTag: string, templateId: string) {
+  constructor(dataTag: string, templateId: string, initialProps?: T) {
+    //     const componentInit = this.init;
+    console.log({ initialProps });
     document.addEventListener("alpine:init", () => {
       (window as any).Alpine.data(dataTag, () => ({
         displayText: "",
@@ -39,6 +41,7 @@ export default class AlpineComponent {
           this.displayText = (this as any).$el.innerHTML;
           (this as any).$el.innerHTML =
             document.getElementById(templateId)?.innerHTML;
+          //           componentInit(initialProps);
         },
         ...getAllMethods(this).reduce(
           (methods, method) => ({
@@ -50,6 +53,10 @@ export default class AlpineComponent {
       }));
     });
   }
+  //
+  //   init(initialProps?: T) {
+  //     console.log({ initialProps });
+  //   }
 }
 
 export { AlpineComponent };

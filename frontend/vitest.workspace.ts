@@ -9,13 +9,10 @@ export default defineWorkspace([
   {
     extends: "vitest.config.ts",
     test: {
-      includeTaskLocation: true,
       browser: {
-        enabled: true,
+        enabled: false,
         name: "firefox",
-        provider: "webdriverio",
-        // https://webdriver.io
-        providerOptions: {},
+        provider: "preview",
       },
     },
   },

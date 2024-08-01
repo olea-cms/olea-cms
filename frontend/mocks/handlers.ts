@@ -18,7 +18,7 @@ export const handlers = [
       headers: { "Content-Type": "text/html" },
     });
   }),
-  http.get("/api/blog/categories", () => {
+  http.get("/api/v1/blog/categories", () => {
     const html = pug`
 ul.p-2#blog-categories
   li #[a Cooking]

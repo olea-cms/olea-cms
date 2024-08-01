@@ -1,34 +1,24 @@
 // vite.config.js
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 
 import vitePugPlugin from "vite-plugin-pug-transformer";
 
-import _env from "./.env.json";
+export default ({ mode }) => {
+  const viteEnv = loadEnv(mode, process.cwd(), "OLEA");
 
-const env = {
-  // Default values
-  // @ts-expect-error
-  OLEA_TITLE: "OleaCMS",
-  // Update with user supplied environment
-  ..._env,
-};
-
-export default defineConfig(() => {
-  return {
-    // config options
+  return defineConfig({
     envPrefix: "OLEA_",
     esbuild: {
-      jsxFactory: 'jsx',
-      jsxFragment: 'jsx.Fragment',
+      jsxFactory: "jsx",
+      jsxFragment: "jsx.Fragment",
     },
     plugins: [
       vitePugPlugin({
         pugLocals: {
-          ENV: env,
-          // If you want to add other locals you can add them below.
+          ...viteEnv,
         },
       }),
       // feathers({ app: '../backend/src/app.ts', port: 3030 })
     ],
-  };
-});
+  });
+};

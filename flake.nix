@@ -20,8 +20,11 @@
             pkgs.stdenv.cc.cc.lib
             pkgs.inotify-tools
             pkgs.nodejs_20
+            pkgs.nodePackages.eslint
             pkgs.nodePackages.typescript
             pkgs.nodePackages.typescript-language-server
+	    pkgs.glibc
+	    pkgs.firefox
             pkgs.bun
             # pkgs.pnpm
             pkgs.tree

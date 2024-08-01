@@ -13,13 +13,13 @@ template#navbarTemplate
               li #[a Category 2]
               //- get blog categories section from server with htmx
           li #[a Contact]
-      a.btn.btn-ghost.text-xl(data-testid='navbar-title') #{ENV.OLEA_TITLE}
+      a.btn.btn-ghost.text-xl(data-testid='navbar-title') #{OLEA_TITLE}
     .navbar-center.hidden.lg(class="lg:flex")
       ul.menu.menu-horizontal.px-1
-        li(hx-get=`${ENV.API_URL}/api/blog/categories` hx-target='#blog-categories' hx-trigger='load' hx-swap="outerHTML")
+        li#blogDropdown(data-testid='blog-dropdown' hx-get=`${OLEA_API_URL}/blog/categories` hx-target='#blog-categories' hx-trigger='click' hx-swap="outerHTML")
           details
             summary Blog
-            ul.p-2.blog-categories
+            ul.p-2#blog-categories
               li #[a Category 1]
               li #[a Category 2]
               //- get blog categories section from server with htmx

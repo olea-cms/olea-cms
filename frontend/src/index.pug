@@ -3,15 +3,24 @@ head
   meta(charset='UTF-8')
   link(rel='icon' type='image/svg+xml' href='/olea-cms-dalle-logo.webp')
   meta(name='viewport' content='width=device-width, initial-scale=1.0')
-  title #{ENV.OLEA_TITLE}
-body
+  title %OLEA_TITLE%
+  <script src="https://unpkg.com/htmx.org@2.0.1/dist/htmx.js" integrity="sha384-gpIh5aLQ0qmX8kZdyhsd6jA24uKLkqIr1WAGtantR4KsS97l/NRBvh8/8OYGThAf" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/htmx-ext-alpine-morph@2.0.0/alpine-morph.js"></script>
+  <script src="https://unpkg.com/htmx-ext-response-targets@2.0.0/response-targets.js"></script>
+  script(type='module' src='src/main.ts')
+  <script src="https://unpkg.com/@shaun/alpinejs-router@1.x.x/dist/cdn.min.js" defer></script>
+// we have to set x-data for pinecone router
+body(x-data)
   div(x-data='navbar')
+  include components/navbar/navbar.pug
   .m-auto(x-data='{ count: 0 }')
     .mt-4.text-center
       span.text-error.text-3xl(x-text='count')
       .flex.justify-between.mt-4
         button.btn.btn-primary(x-on:click='count--') Decrement
         button.btn.btn-secondary(x-on:click='count++') Increment
-  include components/navbar/navbar.pug
 
-script(type='module' src='src/main.ts')
+  // routes
+  include pages/login/index.pug
+  template(x-route='notfound')
+    h1 No route match

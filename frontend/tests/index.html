@@ -1,0 +1,50 @@
+<!DOCTYPE >
+<html>
+  <head>
+    <title>Test</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../node_modules/mocha/mocha.css" />
+    <script src="../../node_modules/mocha/mocha.js"></script>
+    <script src="../../node_modules/chai/chai.js"></script>
+    <meta
+      name="htmx-config"
+      content='{"historyEnabled":false,"defaultSettleDelay":0}'
+    />
+  </head>
+  <body>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script src="../node_modules/chai-dom/chai-dom.js"></script>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/mocha-webdriver/dist/index.js"></script>
+    <script src="../../node_modules/msw/lib/browser/index.js"></script>
+    <script src="../node_modules/mock-socket/dist/mock-socket.js"></script>
+    <script src="../src/htmx.js"></script>
+    <script>
+      // Do not log all the events in headless mode (the log output is enormous)
+      if (navigator.webdriver) {
+        htmx.logAll = function () {};
+      }
+
+      // Add the version number to the top
+      document.getElementById("version-number").innerText += htmx.version;
+    </script>
+
+    <script class="mocha-init">
+      mocha.setup("bdd");
+      mocha.checkLeaks();
+      window.should = window.chai.should();
+    </script>
+
+    <script src="util/util.js"></script>
+
+    <div id="mocha"></div>
+    <script class="mocha-exec">
+      expect = chai.expect;
+
+      // add tests here
+
+      mocha.run();
+    </script>
+    <div id="work-area" hx-history-elt />
+  </body>
+</html>

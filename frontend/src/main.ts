@@ -1,18 +1,26 @@
 import "./style.css";
-
+import "./tracing";
+import PineconeRouter from "pinecone-router";
 import Alpine from "alpinejs";
-// import PineconeRouter from 'pinecone-router';
+import morph from "@alpinejs/morph";
 import { themeChange } from "theme-change";
 
-import Nav from "./components/navbar/navbar";
+import Navbar from "./components/navbar/navbar";
+import LoginPage from "./pages/login/login";
 
 /** Alpine setup **/
 // Expose global
 (window as any).Alpine = Alpine;
-// Alpine.plugin(PineconeRouter);
+Alpine.plugin(morph);
+Alpine.plugin(PineconeRouter);
+(window as any).htmx = htmx;
+(window as any).htmx.config.selfRequestsOnly = false;
 
 /** Init components **/
-new Nav();
+new Navbar();
+
+/** Init pages **/
+new LoginPage();
 
 //** Start alpine **/
 Alpine.start();
