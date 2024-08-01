@@ -50,7 +50,7 @@ jobs:
           cd frontend
           bun install
           # cp .env.json.template .env.json
-          bun run build
+          bun run build:copy
 
       - name: Run backend tests
         run: |
