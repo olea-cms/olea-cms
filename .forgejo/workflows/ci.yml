@@ -54,7 +54,7 @@ jobs:
 
       - name: Run backend tests
         run: |
-          sudo apt install sqlite3
+          apt install sqlite3
           cd backend
           bun test ./
 
