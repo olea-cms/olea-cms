@@ -13,7 +13,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:browser": "vitest --workspace=vitest.workspace.browser.ts"
+    "test:browser": "vitest --workspace=vitest.workspace.browser.ts",
+    "commit": "commit"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
