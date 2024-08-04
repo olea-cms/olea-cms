@@ -1,0 +1,49 @@
+doctype html
+html.h-full.min-h-full
+  head
+    meta(charset='UTF-8')
+    link(rel='icon' type='image/svg+xml' href='/public/olea-logo.png')
+    link(rel="stylesheet" href="/public/stylesheet.css")
+    script(src="https://cdn.twind.style/ext,line-clamp,forms,typography" crossorigin)
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    title ${process.env.OLEA_TITLE ?? "OleaCMS"}
+    script(src="https://unpkg.com/htmx.org@2.0.1/dist/htmx.js" integrity="sha384-gpIh5aLQ0qmX8kZdyhsd6jA24uKLkqIr1WAGtantR4KsS97l/NRBvh8/8OYGThAf" crossorigin="anonymous")
+    script(src='https://unpkg.com/htmx-ext-alpine-morph@2.0.0/alpine-morph.js')
+    script(src='https://unpkg.com/htmx-ext-response-targets@2.0.0/response-targets.js')
+    script(src='https://cdn.jsdelivr.net/npm/pinecone-router@4.x.x/dist/router.min.js')
+    script.
+      document.addEventListener('alpine:init', () => {
+        window.PineconeRouter.settings.hash = false // use hash routing
+        window.PineconeRouter.settings.basePath = '/' // set the base for the URL, doesn't work with hash routing
+        window.PineconeRouter.settings.templateTargetId = 'app' // Set an optional ID for where the internal & external templates will render by default.
+        window.PineconeRouter.settings.interceptLinks = true // Set to false to disable global handling of links by the router, see Disable link handling globally for more.
+        console.log('Alpine init', window.PineconeRouter.settings);
+      })
+    script(src='https://unpkg.com/alpinejs-component@latest/dist/component.min.js' defer='')
+    script(defer='' src='https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js')
+    mixin htmx
+      script.
+        htmx.process(document.documentElement);
+
+    // we have to set x-data for pinecone router
+  body.h-full.min-h-full(x-data)
+    include ../components/navbar
+
+    // #app(class='min-h-[calc(100vh-64px)]')
+    #app(class='h-full min-h-full')
+
+    // routes
+    include login
+    include register
+    template(x-route='notfound')
+      .hero.bg-base-100.min-h-screen(x-data='{ count: 0 }')
+        .hero-content.flex-col
+          div
+            h1.text-5xl.font-bold 404: Page not found
+            p.py-6 Uh oh! Looks like you tried visiting a page that doesn't exist.
+            a.btn.btn-secondary(href='/') Go home
+          h3 Alpine demo:
+          span(x-text='count')
+          .flex.content-between.mt-4.gap-2
+            button.btn.btn-primary(x-on:click='count--') Decrement
+            button.btn.btn-secondary(x-on:click='count++') Increment

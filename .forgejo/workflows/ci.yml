@@ -26,55 +26,67 @@ jobs:
 
       - name: Check commit msg
         run: |
-          bun install
+          bun install && npm rebuild
           commit_message=$(git show -s --format=%s $GITHUB_SHA)
           echo "Commit message:"
           echo "$commit_message"
           echo
           echo "$commit_message" | bunx commitlint
-
-  backend-test:
+  test:
     runs-on: docker
     container: imbios/bun-node
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          cd backend
-          bun install
+      - name: Install deps
+        run: bun i && npm rebuild
 
-      - name: Generate static files
-        run: |
-          cd frontend
-          bun install
-          # cp .env.json.template .env.json
-          bun run build:copy
+      - name: Run tests
+        run: bun test ./test
 
-      - name: Run backend tests
-        run: |
-          npm rebuild
-          cd backend
-          bun test ./
+  # backend-test:
+  #   runs-on: docker
+  #   container: imbios/bun-node
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-  frontend-test:
-    runs-on: docker
-    container: imbios/bun-node
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  #     - name: Install dependencies
+  #       run: |
+  #         cd backend
+  #         bun install
 
-      - name: Install dependencies & setup environment
-        run: |
-          cd frontend
-          bun install
-          # cp .env.json.template .env.json
-          # we need to patch jsdom's xpath implementation for htmx: https://github.com/jsdom/jsdom/pull/3719
-          cd ..
-          git apply --directory=node_modules/jsdom jsdom-xpath-patch.diff
+  #     - name: Generate static files
+  #       run: |
+  #         cd frontend
+  #         bun install
+  #         # cp .env.json.template .env.json
+  #         bun run build:copy
 
-      - name: Run frontend tests
-        run: |
-          cd frontend
-          bun run test
+  #     - name: Run backend tests
+  #       run: |
+  #         npm rebuild
+  #         cd backend
+  #         bun test ./
+
+  # frontend-test:
+  #   runs-on: docker
+  #   container: imbios/bun-node
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+
+  #     - name: Install dependencies & setup environment
+  #       run: |
+  #         cd frontend
+  #         bun install
+  #         # cp .env.json.template .env.json
+  #         # we need to patch jsdom's xpath implementation for htmx: https://github.com/jsdom/jsdom/pull/3719
+  #         cd ..
+  #         git apply --directory=node_modules/jsdom jsdom-xpath-patch.diff
+
+  #     - name: Run frontend tests
+  #       run: |
+  #         cd frontend
+  #         bun run test

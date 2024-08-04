@@ -27,7 +27,6 @@
     "pug": "^3.0.3"
   },
   "devDependencies": {
-    "@commitlint/config-conventional": "^19.2.2",
     "@kitajs/html": "^4.2.0",
     "@tailwindcss/typography": "^0.5.13",
     "better-sqlite3": "^11.1.2",
