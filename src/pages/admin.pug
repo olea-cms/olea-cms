@@ -1,0 +1,34 @@
+#adminPage.min-h-full.h-full
+  include ../components/admin-navbar.pug
+  .hero.bg-base-200.min-h-full.h-full
+    .hero-content.flex-col(class='lg:flex-row-reverse')
+      .text-center(class='lg:pl-16 lg:text-left')
+        h1.text-5xl.font-bold Create, manage, and edit your content.
+      .flex.flex-col.gap-4
+        .card.bg-base-100.image-full.w-full.shadow-xl
+          figure
+            img(src='https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp' alt='Shoes')
+          .card-body
+            h2.card-title Pages
+            p Self contained and static content.
+            p Ex. About page, contact page
+            .card-actions.justify-end
+              button.btn.btn-primary Buy Now
+        .card.bg-base-100.image-full.w-full.shadow-xl
+          figure
+            img(src='https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp' alt='Shoes')
+          .card-body
+            h2.card-title Posts
+            p If a dog chews shoes whose shoes does he choose?
+            .card-actions.justify-end
+              button.btn.btn-primary Buy Now
+        .card.bg-base-100.image-full.w-full.shadow-xl
+          figure
+            img(src='https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp' alt='Shoes')
+          .card-body
+            h2.card-title Portfolios
+            p If a dog chews shoes whose shoes does he choose?
+            .card-actions.justify-end
+              button.btn.btn-primary Buy Now
+
+        // p.py-6

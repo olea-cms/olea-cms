@@ -1,0 +1,55 @@
+.navbar.bg-neutral.text-neutral-content.ring.ring-inset.ring-warning(x-cloak)
+  include icons/index
+  .navbar-start
+    .dropdown
+      button.btn.btn-ghost(class='lg:hidden' role="button" tabindex="0")
+        svg.h-5.w-5(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+          path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16")
+      ul.menu.menu-sm.dropdown-content.bg-neutral.rounded-box.mt-3.w-52.p-2.shadow(class="lg:hidden z-[1]" tabindex="0")
+        li(data-testid='')
+          a Blog
+          ul.p-2#blog-categories
+            li #[a Category 1]
+            li #[a Category 2]
+            //- get blog categories section from server with htmx
+        li #[a Contact]
+      a.btn.btn-ghost(data-testid='navbar-title' href='/admin')
+        +icon-wrench-screwdriver(5)
+  .navbar-center.hidden.lg(class="lg:flex")
+    ul.menu.menu-horizontal.px-0(x-show="!['/login', '/register'].includes($router.path)")
+      li.dropdown.dropdown-end
+        .btn.btn-ghost.btn-sm(tabindex="0" role="button")
+          | Pages
+          +icon-chevron-down(4)
+        ul#blogCategories.dropdown-content.bg-base-200.menu.rounded-box.p-2.shadow.shadow-primary(class='z-[1]' tabindex="0")
+          li #[a Category 1]
+          li #[a Category 2]
+      li.dropdown.dropdown-end
+        .btn.btn-ghost.btn-sm(tabindex="0" role="button")
+          | Posts
+          +icon-chevron-down(4)
+        ul#blogCategories.dropdown-content.bg-base-200.menu.rounded-box.p-2.shadow.shadow-primary(class='z-[1]' tabindex="0")
+          li #[a Category 1]
+          li #[a Category 2]
+      li.dropdown.dropdown-end
+        .btn.btn-ghost.btn-sm(tabindex="0" role="button")
+          | Portfolios
+          +icon-chevron-down(4)
+        ul#blogCategories.dropdown-content.bg-base-200.menu.rounded-box.p-2.shadow.shadow-primary(class='z-[1]' tabindex="0")
+          li #[a Category 1]
+          li #[a Category 2]
+  .navbar-end
+    ul.menu.menu-horizontal.px-0
+      .dropdown.dropdown-end
+        .btn.btn-ghost.btn-sm(tabindex="0" role="button")
+          +icon-ellipsis-vertical(5)
+        ul.menu.menu-sm.dropdown-content.bg-neutral.rounded-box.mt-3.w-52.p-2.shadow.shadow-primary(class='z-[1]' tabindex="0")
+          li
+            a.flex.justify-evenly(href='#')
+              +icon-plus(4)
+              | Create New Content
+          .divider(class='!m-0')
+          li
+            a(href='#')
+              +icon-cog-6-tooth(4)
+              | Instance Settings

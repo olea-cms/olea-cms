@@ -1,21 +1,9 @@
-import { db } from "../db";
-import { eq } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-typebox";
 import { users } from "../schema";
 
-export type User = typeof users.$inferSelect;
-export type InsertUser = typeof users.$inferInsert;
+import type { SetOptional } from "type-fest";
 
-export const createUser = createInsertSchema(users);
+export const TNewUser = createInsertSchema(users);
 
-export const getAllUsers = (): User[] => db.select().from(users).all();
-
-export const getUserById = (id: string) =>
-  db
-    .select({
-      id: users.id,
-      email: users.email,
-      username: users.username,
-    })
-    .from(users)
-    .where(eq(users.id, id));
+export type User = SetOptional<typeof users.$inferSelect, "password">;
+export type NewUser = typeof users.$inferInsert;

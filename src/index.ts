@@ -2,32 +2,63 @@ import { Elysia } from "elysia";
 import staticPlugin from "@elysiajs/static";
 import swagger from "@elysiajs/swagger";
 import { html } from "@elysiajs/html";
+import { htmx } from "@gtramontina.com/elysia-htmx";
 import { tailwind } from "@gtramontina.com/elysia-tailwind";
 import { opentelemetry } from "@elysiajs/opentelemetry";
 import logixlysia from "logixlysia";
 import { autoroutes } from "elysia-autoroutes";
-
-// import { authController } from "./controllers/auth";
-// import { componentController } from "./components";
+import jwt from "@elysiajs/jwt";
 
 import { renderFile } from "pug";
 
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-node";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 
-const app = new Elysia()
+import.meta.env.PROD = import.meta.env.NODE_ENV === "production";
+import.meta.env.DEV = !import.meta.env.PROD;
+
+export const renderCatastrophic = (env = {}) =>
+  renderFile(`${import.meta.dir}/components/catastrophic-error.pug`, env);
+
+export const app = new Elysia()
   .use(
     opentelemetry({
-      spanProcessors: [
-        new BatchSpanProcessor(
-          new OTLPTraceExporter({
-            url: "https://api.honeycomb.io",
-            headers: {
-              "x-honeycomb-team": import.meta.env.OTEL_HONEYCOMB_API_KEY,
-            },
-          }),
-        ),
+      traceExporter: new OTLPTraceExporter(),
+      instrumentations: [
+        getNodeAutoInstrumentations({
+          "@opentelemetry/instrumentation-fs": {
+            enabled: false,
+          },
+        }),
       ],
+    }),
+  )
+  .use(html())
+  .use(htmx())
+  .onError((context) => {
+    context.hx?.retarget("#catastrophicError");
+    if (import.meta.env.DEV) {
+      console.log(context.error);
+    }
+    switch (context.code) {
+      case "NOT_FOUND":
+        context.set.status = 404;
+        // the user should never even see this bc the frontend handles routing
+        return renderCatastrophic({
+          MSG: "How the hell can you even see this?",
+        });
+      case "INTERNAL_SERVER_ERROR":
+        context.set.status = 500;
+        return renderCatastrophic();
+      default:
+        context.set.status = 500;
+        return renderCatastrophic();
+    }
+  })
+  .get("/ping", () => "pong")
+  .use(
+    staticPlugin({
+      prefix: "/public",
     }),
   )
   .use(
@@ -39,24 +70,22 @@ const app = new Elysia()
     }),
   )
   .use(
+    jwt({
+      name: "jwt",
+      secret: process.env.OLEA_JWT_SECRET!,
+      exp: "1h",
+    }),
+  )
+  .use(
     swagger({
       path: "/v1/swagger",
     }),
   )
-  .use(html())
-  .get("/ping", () => "pong")
-  .use(
-    staticPlugin({
-      prefix: "/public",
-    }),
-  )
   .use(autoroutes({ routesDir: "./routes" }))
-  // .use(authController)
-  // .use(componentController)
   .all("/*", ({ html }) => {
     try {
       return html(
-        renderFile(`${import.meta.dir}/pages/index.pug`, { ...process.env }),
+        renderFile(`${import.meta.dir}/index.pug`, { ...process.env }),
       );
     } catch (e) {
       console.log(e);

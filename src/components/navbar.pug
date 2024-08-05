@@ -1,11 +1,10 @@
 .navbar.bg-neutral.text-neutral-content
-  +htmx
   .navbar-start
     .dropdown
-      button.btn.btn-ghost(class="!lg:hidden" role="button" tabindex="0")
+      button.btn.btn-ghost.btn-sm(class='lg:hidden' role="button" tabindex="0")
         svg.h-5.w-5(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor")
           path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16")
-      ul.menu.menu-sm.dropdown-content.bg-neutral.rounded-box.mt-3.w-52.p-2.shadow(class="z-[1]" tabindex="0")
+      ul.menu.menu-sm.dropdown-content.bg-neutral.rounded-box.mt-3.w-52.p-2.shadow(class="lg:hidden z-[1]" tabindex="0")
         li(data-testid='')
           a Blog
           ul.p-2#blog-categories
@@ -13,22 +12,25 @@
             li #[a Category 2]
             //- get blog categories section from server with htmx
         li #[a Contact]
-    a.btn.btn-ghost.text-xl(data-testid='navbar-title' href='/') #{OLEA_TITLE}
-  .navbar-center.hidden.lg(class="lg:flex")
-    ul.menu.menu-horizontal.px-1(x-show="!['/login', '/register'].includes($router.path)")
-      li#blogDropdown(data-testid='blog-dropdown' hx-get=`${OLEA_API_URL}/blog/categories` hx-target='#blog-categories' hx-trigger='click' hx-swap="outerHTML")
-        details
-          summary Blog
-          ul.p-2#blog-categories
-            li #[a Category 1]
-            li #[a Category 2]
-            //- get blog categories section from server with htmx
-      li #[a Contact]
+      a.btn.btn-link(data-testid='navbar-title' href='/')
+        .avatar
+          .w-5.h-5.rounded-full
+            img.w-5.h-5(src=`/public/logo-circle-wrap-text.png`)
+  .navbar-center.hidden.lg(class="lg:flex" x-show="!['/login', '/register', '/admin'].includes($router.path)")
+    ul.menu.menu-horizontal.px-0(x-show="!['/login', '/register'].includes($router.path)")
+      li.dropdown.dropdown-end
+        .btn.btn-ghost.btn-sm(tabindex="0" role="button")
+          | Blog
+          +icon-chevron-down(4)
+        ul#blogCategories.dropdown-content.bg-base-200.menu.rounded-box.p-2.shadow.shadow-primary(class='z-[1]' tabindex="0")
+          li #[a Category 1]
+          li #[a Category 2]
+      li #[a.btn.btn-ghost.btn-sm Contact]
   .navbar-end
-    .dropdown.dropdown-end(x-show="!['/login', '/register'].includes($router.path)")
-      .btn.m-1(tabindex="0" role="button")
-        svg.h-5.w-5.opacity-70(xmlns='http://www.w3.org/2000/svg' viewbox='0 0 16 16' fill='currentColor')
-          path(d='M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z')
-      ul.dropdown-content.bg-neutral.menu.rounded-box.w-52.p-2.shadow(class='z-[1]' tabindex="0")
-        li #[a(href='/login') Login]
-        li #[a(href='/register') Register]
+    ul.menu.menu-horizontal.px-0
+      .dropdown.dropdown-end
+        .btn.btn-ghost.btn-sm(tabindex="0" role="button")
+          +icon-user(5)
+        ul.dropdown-content.bg-base-200.menu.rounded-box.w-52.p-2.shadow.shadow-primary(class='z-[1]' tabindex="0")
+          li #[a(href='/login') Login]
+          li #[a(href='/register') Register]

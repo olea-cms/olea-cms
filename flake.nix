@@ -1,5 +1,5 @@
 {
-  description = "OleaCMS monorepo with backend and frontend";
+  description = "OleaCMS OSS Content Management System";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -15,28 +15,32 @@
       devShells = {
         default = pkgs.mkShell {
 	  nativeBuildInputs = [ pkgs.pkg-config ];
-          buildInputs = [
-            pkgs.emacs
-            pkgs.browsh
-            pkgs.stdenv.cc.cc.lib
-            pkgs.inotify-tools
-            pkgs.nodejs_20
-            pkgs.nodePackages.eslint
-            pkgs.nodePackages.typescript
-            pkgs.nodePackages.typescript-language-server
-            pkgs.glibc
-            pkgs.firefox
-            pkgs.bun
-            # pkgs.pnpm
-            pkgs.tree
-            pkgs.sqlite
-      	    pkgs.beekeeper-studio
-            pkgs.lazysql
-            pkgs.starship
+          buildInputs = with pkgs; [
+            nil
+            ((emacsPackagesFor emacs).emacsWithPackages (
+              epkgs: [ epkgs.vterm ]
+            ))
+            browsh
+            stdenv.cc.cc.lib
+            inotify-tools
+            nodejs_20
+            nodePackages.eslint
+            nodePackages.typescript
+            nodePackages.typescript-language-server
+            glibc
+            glibcLocales
+            glibcLocalesUtf8
+            firefox
+            bun
+            tree
+            sqlite
+      	    beekeeper-studio
+            lazysql
+            starship
           ];
           shellHook = ''
             echo ""
-            echo "Welcome to the OleaCMS backend development environment"
+            echo "Welcome to the OleaCMS development environment"
             # eval "$(starship init bash)"
             LD=$CC
             export LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib:$LD_LIBRARY_PATH"

@@ -1,0 +1,7 @@
+mixin htmx
+  script.
+    htmx.process(document.documentElement);
+mixin route(path = '', fullHeight = true)
+  template(x-route=`/${path}`)
+    div(id=`${path}Route` class=fullHeight ? 'min-h-full h-full': '')
+      block

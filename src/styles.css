@@ -1,3 +1,46 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* for htmx loading states: https://github.com/bigskysoftware/htmx-extensions/blob/main/src/loading-states/README.md */
+[data-loading] {
+  display: none;
+}
+
+/* for hiding elements until alpine is done loading */
+[x-cloak] {
+  display: none !important;
+}
+
+/* nrpogress */
+/* Extracted progress bar styles */
+#nprogress {
+  @apply pointer-events-none;
+}
+
+.bar {
+  @apply bg-secondary shadow shadow-primary fixed z-50 top-0 left-0 w-full;
+  height: 2px;
+}
+
+.peg {
+  @apply absolute right-0 h-full shadow-xl shadow-primary opacity-100 transform rotate-3 translate-y-[-4px];
+}
+
+.spinner {
+  @apply fixed z-50 top-4 right-4;
+}
+
+.spinner-icon {
+  @apply w-4 h-4 border-2 border-transparent border-t-secondary border-l-secondary rounded-full animate-spin;
+}
+
+/* You might still need custom keyframes for specific animations */
+@keyframes nprogress-spinner {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

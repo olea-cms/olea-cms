@@ -1,5 +1,15 @@
 import { createId } from "@paralleldrive/cuid2";
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import {
+  AnySQLiteColumn,
+  int,
+  sqliteTable,
+  text,
+} from "drizzle-orm/sqlite-core";
+
+/** NO LOGIC SHOULD HAPPEN IN THIS FILE!! ONLY DRIZZLE STUFF AND EXPORTING TYPES. THIS IS BECAUSE DRIZZLE WILL EXECUTE THIS FILE EVERY TIME YOU USE THE CLI **/
+export interface UserSettings {
+  darkMode?: boolean;
+}
 
 export const users = sqliteTable("users", {
   id: text("id").primaryKey().$defaultFn(createId),
@@ -7,5 +17,34 @@ export const users = sqliteTable("users", {
   name: text("name"),
   info: text("info"),
   password: text("password").notNull(),
-  settings: text("settings", { mode: "json" }).default(JSON.stringify({})),
+  settings: text("settings", { mode: "json" })
+    .default({
+      darkMode: true,
+    })
+    .$type<UserSettings>(),
+  createdAt: int("created_at").notNull().$defaultFn(Date.now),
+  updatedAt: int("updated_at").notNull().$defaultFn(Date.now),
+});
+
+export const content = sqliteTable("content", {
+  id: text("id").primaryKey().$defaultFn(createId),
+  versionId: text("version_id")
+    .notNull()
+    // https://github.com/drizzle-team/drizzle-orm/issues/1807
+    .references((): AnySQLiteColumn => contentVersions.id),
+  type: text("type").notNull().$type<"page" | "post" | "portfolio">(),
+  content: text("content").notNull(),
+  createdAt: int("created_at").notNull().$defaultFn(Date.now),
+  updatedAt: int("updated_at").notNull().$defaultFn(Date.now),
+});
+
+export const contentVersions = sqliteTable("content_versions", {
+  id: text("id").primaryKey().$defaultFn(createId),
+  contentId: text("content_id")
+    .notNull()
+    .references((): AnySQLiteColumn => content.id),
+  versionNumber: int("version_number").notNull(),
+  title: text("text").notNull(),
+  content: text("content").notNull(),
+  createdAt: int("created_at").notNull().$defaultFn(Date.now),
 });
