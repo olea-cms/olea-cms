@@ -21,7 +21,7 @@
       li.dropdown.dropdown-end
         .btn.btn-ghost.btn-sm(tabindex="0" role="button")
           | Blog
-          +icon-chevron-down(4)
+          +heroicon('chevron-down', { size: 4 })
         ul#blogCategories.dropdown-content.bg-base-200.menu.rounded-box.p-2.shadow.shadow-primary(class='z-[1]' tabindex="0")
           li #[a Category 1]
           li #[a Category 2]
@@ -30,7 +30,7 @@
     ul.menu.menu-horizontal.px-0
       .dropdown.dropdown-end
         .btn.btn-ghost.btn-sm(tabindex="0" role="button")
-          +icon-user(5)
-        ul.dropdown-content.bg-base-200.menu.rounded-box.w-52.p-2.shadow.shadow-primary(class='z-[1]' tabindex="0")
+          +heroicon('user', { size: 5 })
+        ul.dropdown-content.bg-base-200.menu.rounded-box.w-52.p-2.ring-1.ring-primary.z-20(tabindex="0")
           li #[a(href='/login') Login]
           li #[a(href='/register') Register]

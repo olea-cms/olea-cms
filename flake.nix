@@ -20,7 +20,8 @@
             ((emacsPackagesFor emacs).emacsWithPackages (
               epkgs: [ epkgs.vterm ]
             ))
-            browsh
+            ripgrep
+            redmine
             stdenv.cc.cc.lib
             inotify-tools
             nodejs_20

@@ -1,13 +1,10 @@
 import { ElysiaApp } from "../..";
-import { renderFile } from "pug";
+import { renderPugFile } from "../../libs/renderPug";
 
 export default (app: ElysiaApp) =>
   app.get("/template", async () => {
     try {
-      return renderFile(
-        `${import.meta.dir}/../../pages/admin.pug`,
-        process.env,
-      );
+      return renderPugFile(`pages/admin.pug`);
     } catch (error) {
       console.log(error);
     }

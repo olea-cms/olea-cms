@@ -1,7 +1,12 @@
-include chevron-down.pug
-include ellipsis-vertical.pug
-include home.pug
-include user.pug
-include wrench-screwdriver.pug
-include plus.pug
-include cog-6-tooth.pug
+//- https://stackoverflow.com/questions/45824697/workaround-to-dynamic-includes-in-pug-jade
+//- adynamicInclude is included as a variable in every call of
+//- renderPug and renderPugFile, see libs/renderPug.ts and
+//- libs/dynamicPugInclude.ts
+//- also I just wanna say this is really based
+mixin heroicon(iconName, opts = { size: 6, fill: 'currentColor' })
+  .pug-hero-icon&attributes(attributes)
+    | !{dynamicInclude(`components/icons/${iconName}.pug`, { size: opts.size || 6, fill: opts.fill || 'currentColor'})}
+
+//- this sucks booty but I have to do it to precompile all the sizes I
+//- want, probably will have to do it for fill colors as well
+.hidden.size-1.size-2.size-3.size-4.size-5.size-6.size-7.size-8.size-9.size-10.size-12.size-14.size-16.size-18.size-20.size-24.size-28.size-32.size-40.size-42

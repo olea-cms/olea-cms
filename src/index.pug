@@ -24,7 +24,12 @@ html.h-full.min-h-full
         window.PineconeRouter.settings.templateTargetId = 'app' // Set an optional ID for where the internal & external templates will render by default.
         window.PineconeRouter.settings.interceptLinks = true // Set to false to disable global handling of links by the router, see Disable link handling globally for more.
       });
-      document.addEventListener('pinecone-start', () => {NProgress.start()});
+      document.addEventListener('pinecone-start', ({ target }) => {
+        NProgress.start();
+        if (PineconeRouter.context.path === target.location.pathname) {
+          NProgress.done();
+        }
+      });
       document.addEventListener('pinecone-end', () => {NProgress.done()});
       document.addEventListener('fetch-error', (err) => console.error(err));
       // enable swapping into the catastrophicError element when
@@ -70,16 +75,30 @@ html.h-full.min-h-full
       })();
     script(src='https://unpkg.com/alpinejs-component@latest/dist/component.min.js' defer='')
     script(defer='' src='https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js')
+
     include common/mixins
-    include components/icons/index
+    //- https://stackoverflow.com/questions/45824697/workaround-to-dynamic-includes-in-pug-jade
+    //- adynamicInclude is included as a variable in every call of
+    //- renderPug and renderPugFile, see libs/renderPug.ts and
+    //- libs/dynamicPugInclude.ts
+    //- also I just wanna say this is really based
+    mixin heroicon(iconName, opts = { size: 6, fill: 'currentColor' })
+      .pug-hero-icon&attributes(attributes)
+        | !{dynamicInclude(`components/icons/${iconName}.pug`, { size: opts.size || 6, fill: opts.fill || 'currentColor'})}
+
+    //- this sucks booty but I have to do it to precompile all the sizes I
+    //- want, probably will have to do it for fill colors as well
+    .hidden.size-1.size-2.size-3.size-4.size-5.size-6.size-7.size-8.size-9.size-10.size-12.size-14.size-16.size-18.size-20.size-24.size-28.size-32.size-40.size-42
+
 
   // we have to set x-data for pinecone router
-  body.h-full.min-h-full(x-data='router()' hx-ext='loading-states, alpine-morph' hx-swap='morph')
+  body.bg-base-200.h-full.min-h-full(x-data='router()' hx-ext='loading-states, alpine-morph' hx-swap='morph')
     #catastrophicError
     include components/navbar
+    include components/admin-navbar
 
-    // #app(class='min-h-[calc(100vh-64px)]')
-    #app(class='h-full min-h-full')
+    #app(class='h-[calc(100vh-64px)] min-h-[calc(100vh-64px)]')
+    // #app(class='h-full min-h-full')
 
     // routes
     template(x-route='/admin' x-template='/admin/template')

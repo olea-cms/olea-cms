@@ -1,34 +1,36 @@
 #adminPage.min-h-full.h-full
-  include ../components/admin-navbar.pug
-  .hero.bg-base-200.min-h-full.h-full
+  .hero.bg-transparent.min-h-full.h-full
     .hero-content.flex-col(class='lg:flex-row-reverse')
       .text-center(class='lg:pl-16 lg:text-left')
         h1.text-5xl.font-bold Create, manage, and edit your content.
       .flex.flex-col.gap-4
-        .card.bg-base-100.image-full.w-full.shadow-xl
+        .card.bg-base-100.shadow-xl.ring-1.ring-primary(class='lg:card-side')
           figure
-            img(src='https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp' alt='Shoes')
+            .p-16
+              :hero-icon(name='document' size=20)
           .card-body
-            h2.card-title Pages
-            p Self contained and static content.
-            p Ex. About page, contact page
+            h2.card-title Page
+            p Static, standalone content that does not frequently change.
             .card-actions.justify-end
-              button.btn.btn-primary Buy Now
-        .card.bg-base-100.image-full.w-full.shadow-xl
+              button.btn.btn-primary
+                :hero-icon(name='plus')
+        .card.bg-base-100.shadow-xl.ring-1.ring-primary(class='lg:card-side')
           figure
-            img(src='https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp' alt='Shoes')
+            .p-16
+              :hero-icon(name='newspaper' size=20)
           .card-body
-            h2.card-title Posts
-            p If a dog chews shoes whose shoes does he choose?
+            h2.card-title Post
+            p Dynamic content for time-sensitive or regularly updated information.
             .card-actions.justify-end
-              button.btn.btn-primary Buy Now
-        .card.bg-base-100.image-full.w-full.shadow-xl
+              button.btn.btn-primary
+                :hero-icon(name='plus')
+        .card.bg-base-100.shadow-xl.ring-1.ring-primary(class='lg:card-side')
           figure
-            img(src='https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp' alt='Shoes')
+            .p-16
+              :hero-icon(name='briefcase' size=20)
           .card-body
-            h2.card-title Portfolios
-            p If a dog chews shoes whose shoes does he choose?
+            h2.card-title Portfolio
+            p Showcase of personal work, projects, or achievements.
             .card-actions.justify-end
-              button.btn.btn-primary Buy Now
-
-        // p.py-6
+              button.btn.btn-primary
+                :hero-icon(name='plus')

@@ -13,6 +13,7 @@ import { renderFile } from "pug";
 
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+import { renderPugFile } from "./libs/renderPug";
 
 import.meta.env.PROD = import.meta.env.NODE_ENV === "production";
 import.meta.env.DEV = !import.meta.env.PROD;
@@ -84,9 +85,7 @@ export const app = new Elysia()
   .use(autoroutes({ routesDir: "./routes" }))
   .all("/*", ({ html }) => {
     try {
-      return html(
-        renderFile(`${import.meta.dir}/index.pug`, { ...process.env }),
-      );
+      return html(renderPugFile(`index.pug`));
     } catch (e) {
       console.log(e);
     }
