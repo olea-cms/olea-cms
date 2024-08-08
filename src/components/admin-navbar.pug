@@ -1,34 +1,39 @@
-.navbar.bg-transparent.text-neutral-content.fixed.bottom-4.z-10(x-cloak class="md:bottom-auto")
-  .navbar-center.lg.fixed.bottom-4.right-4(class="md:flex md:bottom-auto md:top-8 md:right-1/2 md:translate-x-1/2")
+.navbar.bg-transparent.text-neutral-content.fixed.bottom-4.z-10(x-cloak x-show="$router.path === '/admin'" class="md:bottom-auto")
+  .navbar-center.lg.fixed.bottom-4.right-4(class="md:flex md:bottom-auto md:top-6 md:right-1/2 md:translate-x-1/2")
     ul.menu.menu-horizontal.bg-base-300.rounded-box.shadow.ring-1.ring-warning
       li
         a(href='/admin')
           div(class='py-0.5')
             :hero-icon(name='wrench-screwdriver' size=4)
+      .divider.divider-horizontal.m-0
       li.dropdown.dropdown-top.dropdown-end(class='lg:dropdown-bottom')
         a(tabindex="0" role="button")
-          +heroicon('document', { size: 4 })
+          // +heroicon('document', { size: 4 })
+          :hero-icon(name='document', size=4)
           span.hidden.lg(class="lg:flex") Pages
         ul.dropdown-content.menu.bg-base-300.rounded-box.p-2.shadow(class='z-[1]' tabindex="0")
           li #[a Category 1]
           li #[a Category 2]
       li.dropdown.dropdown-top.dropdown-end(class='lg:dropdown-bottom')
         a(tabindex="0" role="button")
-          +heroicon('newspaper', { size: 4 })
+          // +heroicon('newspaper', { size: 4 })
+          :hero-icon(name='newspaper', size=4)
           span.hidden.lg(class="lg:flex") Posts
         ul.dropdown-content.menu.bg-base-300.rounded-box.p-2.shadow(class='z-[1]' tabindex="0")
           li #[a Category 1]
           li #[a Category 2]
       li.dropdown.dropdown-top.dropdown-end(class='lg:dropdown-bottom')
         a(tabindex="0" role="button")
-          +heroicon('briefcase', { size: 4 })
+          // +heroicon('briefcase', { size: 4 })
+          :hero-icon(name='briefcase', size=4)
           span.hidden.lg(class="lg:flex") Portfolios
         ul.dropdown-content.menu.bg-base-300.rounded-box.p-2.shadow(class='z-[1]' tabindex="0")
           li #[a Category 1]
           li #[a Category 2]
+      .divider.divider-horizontal.m-0
       li.dropdown.dropdown-top.dropdown-end(class='lg:dropdown-bottom')
         a(tabindex="0" role="button")
-          div(class='py-0.5')
+          div(class='p-0.5 px-0')
             :hero-icon(name='ellipsis-vertical' size=4)
         ul.dropdown-content.menu.bg-base-300.rounded-box.p-2.shadow(class='z-[1]' tabindex="0")
           li #[a Category 1]

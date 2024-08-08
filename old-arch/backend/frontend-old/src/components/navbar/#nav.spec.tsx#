@@ -1,0 +1,42 @@
+/// <reference lib="dom" />
+import { findByTestId, findByText } from "@testing-library/dom";
+import template from "./nav.pug?raw";
+
+beforeEach(() => {
+  const jsScript = transpileTscModule(template);
+  const compiledPug: string = compilePug(
+    template,
+    {},
+  )({
+    ENV: {
+      OLEA_TITLE: "OleaCMS",
+    },
+  });
+  console.log({compiledPug, jsScript});
+  compiledPug.replace(
+    `<script type="module" src="src/components/nav/nav.ts"></script>`,
+    `<script type="module">${jsScript}</script>`
+  );
+  document.body.innerHTML = compiledPug;
+});
+
+/* it("renders server HTML", async () => {
+ *   document.body.appendChild(
+ *     <div>
+ *       <div hx-get="/api/data" hx-target="#results" hx-trigger="load">Load me</div>
+ *       <div id="results"></div>
+ *     </div>
+ *   );
+ *
+ *   fireEvent.load(document.querySelector("[hx-get]")!);
+ *
+ *   const result = await findByText(document.body, "Server rendered HTML");
+ *   expect(result).toBeInTheDocument();
+ * }); */
+
+it("renders pug template", async () => {
+  console.log(document.body.innerHTML);
+  expect(await findByTestId(document.body, "navbar-title")).toBeInTheDocument();
+});
+
+it("renders categories correctly", async () => {});

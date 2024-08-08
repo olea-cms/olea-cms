@@ -2,35 +2,38 @@
   .hero.bg-transparent.min-h-full.h-full
     .hero-content.flex-col(class='lg:flex-row-reverse')
       .text-center(class='lg:pl-16 lg:text-left')
-        h1.text-5xl.font-bold Create, manage, and edit your content.
-      .flex.flex-col.gap-4
+        h1.text-5xl.font-bold.py-16 Create, manage, and edit your content.
+      .flex.flex-col.gap-8
         .card.bg-base-100.shadow-xl.ring-1.ring-primary(class='lg:card-side')
           figure
-            .p-16
+            .p-16(class='lg:pl-16 lg:pr-32 lg:py-16')
               :hero-icon(name='document' size=20)
           .card-body
             h2.card-title Page
             p Static, standalone content that does not frequently change.
-            .card-actions.justify-end
+            .card-actions.justify-start.mt-4(class='md:justify-end')
               button.btn.btn-primary
                 :hero-icon(name='plus')
+                | New page
         .card.bg-base-100.shadow-xl.ring-1.ring-primary(class='lg:card-side')
           figure
-            .p-16
+            .p-16(class='lg:pl-16 lg:pr-32 lg:py-16')
               :hero-icon(name='newspaper' size=20)
           .card-body
             h2.card-title Post
-            p Dynamic content for time-sensitive or regularly updated information.
-            .card-actions.justify-end
+            p Dynamic content, time sensitive, or regularly updated information.
+            .card-actions.justify-start.mt-4(class='md:justify-end')
               button.btn.btn-primary
                 :hero-icon(name='plus')
+                | New post
         .card.bg-base-100.shadow-xl.ring-1.ring-primary(class='lg:card-side')
           figure
-            .p-16
+            .p-16(class='lg:pl-16 lg:pr-32 lg:py-16')
               :hero-icon(name='briefcase' size=20)
           .card-body
             h2.card-title Portfolio
-            p Showcase of personal work, projects, or achievements.
-            .card-actions.justify-end
+            p Showcase of personal or professional work, projects, or achievements.
+            .card-actions.justify-start.mt-4(class='md:justify-end')
               button.btn.btn-primary
                 :hero-icon(name='plus')
+                | New portfolio

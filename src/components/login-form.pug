@@ -1,5 +1,5 @@
 // https://gist.github.com/lysender/a36143c002a84ed2c166bf7567b1a913
-form.card-body(x-data='{ email: "", isInvalidEmail: (email) => (email && !email.match(/^[^@]+@[^@]+\.[^@]+$/)), }' hx-encoding='multipart/form-data' hx-post='/auth/login' hx-trigger='submit' hx-on::before-swap='if ([422, 520].includes(event.detail.xhr.status)) { event.detail.shouldSwap = true; event.detail.isError = false; }')
+form.card-body(native x-data='{ email: "", isInvalidEmail: (email) => (email && !email.match(/^[^@]+@[^@]+\.[^@]+$/)), }' hx-encoding='multipart/form-data' hx-post='/auth/login' hx-trigger='submit' hx-on::before-swap=`if ([401, 422].includes(event.detail.xhr.status)) { console.log(event.detail); event.detail.target = document.getElementById('serverMsg'); event.detail.shouldSwap = true; event.detail.isError = true; } else { console.log(event.detail, event.detail.xhr.status) }`)
   .form-control
     label.label
       span.label-text Email

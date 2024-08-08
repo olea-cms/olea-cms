@@ -2,17 +2,11 @@ import { render, renderFile } from "pug";
 import { dynamicInclude } from "./dynamicPugInclude";
 
 export const renderPug = (pugString: string, opts = {}) => {
-  return render(
-    pugString +
-      `
-  include icons/index
-  `,
-    {
-      ...import.meta.env,
-      dynamicInclude,
-      ...opts,
-    },
-  );
+  return render(pugString, {
+    ...import.meta.env,
+    dynamicInclude,
+    ...opts,
+  });
 };
 
 const heroIconFilter = (

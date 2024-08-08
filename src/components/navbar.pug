@@ -32,5 +32,17 @@
         .btn.btn-ghost.btn-sm(tabindex="0" role="button")
           +heroicon('user', { size: 5 })
         ul.dropdown-content.bg-base-200.menu.rounded-box.w-52.p-2.ring-1.ring-primary.z-20(tabindex="0")
-          li #[a(href='/login') Login]
-          li #[a(href='/register') Register]
+          li
+            a(href='/register')
+              :hero-icon(name='clipboard-document-list' size=4)
+              | Register
+          li
+            a(href='/login')
+              :hero-icon(name='key' size=4)
+              | Log in
+          div(x-show='getCookie(LOCALSTORAGE_AUTH_KEY) && !isExpired()')
+            .divider.m-0
+            li
+              a(hx-post='/auth/logout' hx-on::trigger="startProgress()" hx-on::before-swap=`['isAuthed', 'authExpiry'].forEach((key) => localStorage.removeItem(key))`)
+                :hero-icon(name='arrow-right-start-on-rectangle' size=4)
+                | Log out

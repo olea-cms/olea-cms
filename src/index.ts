@@ -1,111 +1,68 @@
-import { Elysia } from "elysia";
-import staticPlugin from "@elysiajs/static";
-import swagger from "@elysiajs/swagger";
-import { html } from "@elysiajs/html";
-import { htmx } from "@gtramontina.com/elysia-htmx";
-import { tailwind } from "@gtramontina.com/elysia-tailwind";
-import { opentelemetry } from "@elysiajs/opentelemetry";
-import logixlysia from "logixlysia";
-import { autoroutes } from "elysia-autoroutes";
-import jwt from "@elysiajs/jwt";
+interface Window {
+  PineconeRouter: any;
+  NProgress: any;
+}
 
-import { renderFile } from "pug";
+// htmx.logAll();
 
-import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
-import { renderPugFile } from "./libs/renderPug";
+const startProgress = () => window.NProgress.start();
+const endProgress = () => window.NProgress.done();
 
-import.meta.env.PROD = import.meta.env.NODE_ENV === "production";
-import.meta.env.DEV = !import.meta.env.PROD;
+// alpine config
+document.addEventListener("alpine:init", () => {
+  window.PineconeRouter.settings.hash = false; // use hash routing
+  window.PineconeRouter.settings.basePath = "/"; // set the base for the URL, doesn't work with hash routing
+  window.PineconeRouter.settings.templateTargetId = "app"; // Set an optional ID for where the internal & external templates will render by default.
+  window.PineconeRouter.settings.interceptLinks = true; // Set to false to disable global handling of links by the router, see Disable link handling globally for more.
+});
+document.addEventListener("pinecone-start", ({ target }: any) => {
+  startProgress();
+  if (window.PineconeRouter.context.path === target.location.pathname) {
+    endProgress();
+  }
+});
+document.addEventListener("pinecone-end", () => {
+  endProgress();
+});
+document.addEventListener("fetch-error", (err) => console.error(err));
+// enable swapping into the catastrophicError element when
+// response codes are 5xx
+// document.addEventListener("htmx:beforeSwap", ({ detail }: any) => {
+//   console.log("hm");
+//   if (detail.xhr.status === 500 && detail.target.id === "catastrophicError") {
+//     console.log("hmmmmmm");
+//     detail.shouldSwap = true;
+//     detail.isError = true;
+//   }
+// });
 
-export const renderCatastrophic = (env = {}) =>
-  renderFile(`${import.meta.dir}/components/catastrophic-error.pug`, env);
+// Helper function to get cookies
+function getCookie(name: string) {
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  if (match) {
+    return match[2];
+  }
+  return null;
+}
 
-export const app = new Elysia()
-  .use(
-    opentelemetry({
-      traceExporter: new OTLPTraceExporter(),
-      instrumentations: [
-        getNodeAutoInstrumentations({
-          "@opentelemetry/instrumentation-fs": {
-            enabled: false,
-          },
-        }),
-      ],
-    }),
-  )
-  .use(html())
-  .use(htmx())
-  .onError((context) => {
-    context.hx?.retarget("#catastrophicError");
-    if (import.meta.env.DEV) {
-      console.log(context.error);
+const isExpired = () =>
+  new Date(<number>new Number(getCookie(LOCALSTORAGE_AUTH_KEY) || "0")) <
+  new Date();
+
+const router = () => ({
+  authHandler(context: any) {
+    // check values
+    const onAuthPage = ["/login", "/register"].includes(context.path);
+
+    // Check if auth flag or expiry exist, otherwise redirect
+    if (isExpired() && !onAuthPage) {
+      context.redirect("/");
+      return "stop";
     }
-    switch (context.code) {
-      case "NOT_FOUND":
-        context.set.status = 404;
-        // the user should never even see this bc the frontend handles routing
-        return renderCatastrophic({
-          MSG: "How the hell can you even see this?",
-        });
-      case "INTERNAL_SERVER_ERROR":
-        context.set.status = 500;
-        return renderCatastrophic();
-      default:
-        context.set.status = 500;
-        return renderCatastrophic();
-    }
-  })
-  .get("/ping", () => "pong")
-  .use(
-    staticPlugin({
-      prefix: "/public",
-    }),
-  )
-  .use(
-    logixlysia({
-      config: {
-        showBanner: true,
-        ip: true,
-      },
-    }),
-  )
-  .use(
-    jwt({
-      name: "jwt",
-      secret: process.env.OLEA_JWT_SECRET!,
-      exp: "1h",
-    }),
-  )
-  .use(
-    swagger({
-      path: "/v1/swagger",
-    }),
-  )
-  .use(autoroutes({ routesDir: "./routes" }))
-  .all("/*", ({ html }) => {
-    try {
-      return html(renderPugFile(`index.pug`));
-    } catch (e) {
-      console.log(e);
-    }
-  })
-  .use(
-    tailwind({
-      path: "/public/stylesheet.css",
-      source: "./src/styles.css",
-      config: "./tailwind.config.js",
-      options: {
-        minify: false,
-        map: true,
-        autoprefixer: true,
-      },
-    }),
-  )
-  .listen(3000);
 
-// console.log(
-//   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
-// );
-
-export type ElysiaApp = typeof app;
+    // redirect to admin homepage if user is already authed and goes to login or registration
+    if (!isExpired() && onAuthPage) {
+      context.redirect("/admin");
+    }
+  },
+});

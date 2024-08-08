@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, jest } from "bun:test";
 import jwt from "jsonwebtoken";
-import { app } from "../src";
+import { app } from "../src/olea";
 import { db } from "../src/db";
 import { users } from "../src/schema";
 const apiUrl = `http://localhost:3000/api/v1`;
@@ -9,7 +9,7 @@ const authUrl = `${apiUrl}/auth`;
 describe("Users endpoint", () => {
   describe("GET USERS", () => {
     afterAll(async () => {
-      db.delete(users).all();
+      await db.delete(users);
     });
 
     it("should return 200 and have 0 array of results", async () => {

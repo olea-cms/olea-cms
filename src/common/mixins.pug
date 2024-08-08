@@ -1,7 +1,9 @@
 mixin htmx
   script.
     htmx.process(document.documentElement);
-mixin route(path = '', fullHeight = true)
-  template(x-route=`/${path}`)
-    div(id=`${path}Route` class=fullHeight ? 'min-h-full h-full': '')
-      block
+
+mixin route(path = '', handlers = '[]', template = null, fullHeight = true)
+  template(x-route=`/${path}` x-template=template x-handler=handlers)
+    if !template
+      div(id=`${path}Route` class=fullHeight ? 'min-h-full h-full': '')
+        block

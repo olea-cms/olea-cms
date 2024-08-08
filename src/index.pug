@@ -1,5 +1,5 @@
 doctype html
-html.h-full.min-h-full
+html.h-full.min-h-full.bg-base-200
   head
     meta(charset='UTF-8')
     link(rel='icon' type='image/svg+xml' href='/public/logo-circle-wrap-text.png')
@@ -11,70 +11,17 @@ html.h-full.min-h-full
     script(defer src="https://unpkg.com/@alpinejs/morph@3.x.x/dist/cdn.min.js")
     script(src='https://unpkg.com/htmx-ext-response-targets@2.0.0/response-targets.js')
     script(src="https://unpkg.com/htmx-ext-loading-states@2.0.0/loading-states.js")
+    script(src="https://unpkg.com/htmx-ext-ws@2.0.0/ws.js")
     script(src='https://cdn.jsdelivr.net/npm/pinecone-router@4.x.x/dist/router.min.js')
     script(src='https://unpkg.com/nprogress@0.2.0/nprogress.js')
     //- link(rel='stylesheet' href='https://unpkg.com/nprogress@0.2.0/nprogress.css')
     link(rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css")
     script(type="text/javascript" src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js")
-    script.
-      // alpine config
-      document.addEventListener('alpine:init', () => {
-        window.PineconeRouter.settings.hash = false // use hash routing
-        window.PineconeRouter.settings.basePath = '/' // set the base for the URL, doesn't work with hash routing
-        window.PineconeRouter.settings.templateTargetId = 'app' // Set an optional ID for where the internal & external templates will render by default.
-        window.PineconeRouter.settings.interceptLinks = true // Set to false to disable global handling of links by the router, see Disable link handling globally for more.
-      });
-      document.addEventListener('pinecone-start', ({ target }) => {
-        NProgress.start();
-        if (PineconeRouter.context.path === target.location.pathname) {
-          NProgress.done();
-        }
-      });
-      document.addEventListener('pinecone-end', () => {NProgress.done()});
-      document.addEventListener('fetch-error', (err) => console.error(err));
-      // enable swapping into the catastrophicError element when
-      // response codes are 5xx
-      document.addEventListener('htmx:beforeSwap', ({ detail }) => {
-        if (detail.xhr.status === 500 && detail.target.id === 'catastrophicError') {
-          detail.shouldSwap = true;
-        }
-      });
-
-      // Helper function to get cookies
-      function getCookie(name) {
-          const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-          if (match) {
-            console.log({match});
-            return match[2];
-          }
-          return null;
-      }
-
-      const router = () => ({
-        authHandler(context) {
-          // Check for jwt in cookies
-          const jwt = getCookie('auth');
-          if (!jwt && !['/login', '/register'].includes(context.path)) {
-            context.redirect('/');
-            return 'stop';
-          }
-          if (['/login', '/register'].includes(context.path)) {
-            context.redirect('/admin');
-          }
-        }
-      });
-    script.
-      (function() {
-        // Set global variable based on cookie existence
-        window.isAuthed = !!getCookie('auth');
-        // Remove this script from the document >:-)
-        const scriptElement = document.currentScript;
-        if (scriptElement && scriptElement.parentNode) {
-          scriptElement.parentNode.removeChild(scriptElement);
-        }
-      })();
     script(src='https://unpkg.com/alpinejs-component@latest/dist/component.min.js' defer='')
     script(defer='' src='https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js')
+    script
+      include:typescript common/feConstants.ts
+      include:typescript index.ts
 
     include common/mixins
     //- https://stackoverflow.com/questions/45824697/workaround-to-dynamic-includes-in-pug-jade
@@ -92,19 +39,25 @@ html.h-full.min-h-full
 
 
   // we have to set x-data for pinecone router
-  body.bg-base-200.h-full.min-h-full(x-data='router()' hx-ext='loading-states, alpine-morph' hx-swap='morph')
+  body.bg-base-200.h-fit.min-h-full.pb-4(x-data='router()' hx-ext='loading-states, alpine-morph' hx-swap='morph')
     #catastrophicError
     include components/navbar
     include components/admin-navbar
 
-    #app(class='h-[calc(100vh-64px)] min-h-[calc(100vh-64px)]')
-    // #app(class='h-full min-h-full')
+    #app(class='min-h-[calc(100vh-80px)] h-[calc(100vh-80px)]')
 
     // routes
-    template(x-route='/admin' x-template='/admin/template')
-    include pages/home
-    include pages/login
-    include pages/register
+    +route('/admin', 'authHandler', '/admin/template')
+    +route('')
+      include pages/home
+    +route('/login', 'authHandler')
+      include pages/login
+    +route('/register', 'authHandler')
+      include pages/register
+    +route('/%F0%9F%92%A9')
+      include components/catastrophic-error
+    +route('/💩')
+      include components/catastrophic-error
     template(x-route='notfound')
       .hero.bg-base-100.min-h-screen(x-data='{ count: 0 }')
         +htmx
