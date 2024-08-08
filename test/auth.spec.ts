@@ -1,115 +1,190 @@
-import { describe, it, expect, beforeAll, afterEach, mock } from "bun:test";
 import {
-  loginHandler,
-  registerHandler,
-  logoutHandler,
-} from "../path/to/auth/routes";
-import { UsersService } from "../path/to/services/users";
-import HttpStatusCode from "../path/to/common/statusCodes";
+  describe,
+  it,
+  expect,
+  beforeAll,
+  beforeEach,
+  afterEach,
+  mock,
+  afterAll,
+} from "bun:test";
+import { NewUser } from "../src/models/user";
+import { app } from "../src/olea";
+import { db } from "../src/db";
+import { users } from "../src/schema";
+import { forEachObj, map, mapKeys, omit } from "remeda";
+import HttpStatusCode from "../src/common/statusCodes";
+import { IncorrectPasswordException } from "../src/exceptions/incorrectPassword";
+import { eq } from "drizzle-orm";
+import { UsersService } from "../src/services/users";
+const API_URL = `http://localhost:3000`;
+const AUTH_URL = `${API_URL}/auth`;
 
-// Mock Bun's password and jwt functionality
-const mockJwt = { sign: mock(() => "mocked.jwt.token") };
-const mockPasswordVerify = mock((password, hash) => password === "password123");
+const mockUser0 = {
+  email: "test0@user.com",
+  password: "test0password",
+};
+const mockUser1 = {
+  email: "test1@user.com",
+  password: "test1password",
+};
 
-// Mock UsersService functions
-mock(UsersService, {
-  getUserByEmail: async (email) => {
-    if (email === "test@example.com") {
-      return { id: 1, email: "test@example.com", password: "hashedpassword" };
-    }
-    return null;
-  },
-  isUserAvailable: async (email) => email !== "test@example.com",
-  createUser: async (user) => ({ id: 2, ...user }),
-});
+const formDataFromObj = (keyvals: Record<string, any>) => {
+  const formData = new FormData();
+  forEachObj(keyvals, (val, key) => {
+    formData.append(key, val);
+  });
+  return formData;
+};
 
-// Create a function to generate mock requests
-const createMockRequest = (overrides = {}) => ({
-  body: {},
-  jwt: mockJwt,
-  cookie: {
-    auth: { set: mock(), remove: mock() },
-    expiryCookie: { set: mock(), remove: mock() },
-  },
-  set: { status: mock() },
-  error: mock(),
-  hx: { redirect: mock() },
-  ...overrides,
-});
+const extractResponseBlob = async (response: Response, as = "text") =>
+  await (await (<any>response.blob()))[as]();
 
 describe("Authentication Routes", () => {
-  afterEach(() => {
-    // Reset all mocks after each test to ensure clean state
-    mock.resetAll();
+  beforeEach(async () => {
+    await db.insert(users).values({
+      ...mockUser0,
+      password: await Bun.password.hash(mockUser0.password, {
+        algorithm: "argon2id",
+      }),
+    });
+  });
+
+  afterEach(async () => {
+    await db.delete(users);
+  });
+
+  it("errors without correct data (email/password) on /login and /register", async () => {
+    const res = await app.fetch(
+      new Request(`${AUTH_URL}/login`, {
+        method: "POST",
+        body: new FormData(),
+      }),
+    );
+
+    expect(res.ok).toBeFalse();
+    expect(res.status).toBe(HttpStatusCode.UNPROCESSABLE_ENTITY_422);
+    expect(res.headers.get("set-cookie")).toBeNull();
+    expect(res.headers.get("hx-redirect")).toBeNull();
+    expect(res.redirected).toBeFalse();
+
+    const jsonRes = JSON.parse(await extractResponseBlob(res));
+
+    expect(jsonRes.type).toEqual("validation");
+    expect(jsonRes.summary).toEqual("Property 'email' is missing");
+    expect(jsonRes.errors.length).toBePositive();
   });
 
   describe("/login", () => {
+    const LOGIN_URL = `${AUTH_URL}/login`;
     it("successfully logs in a user", async () => {
-      const request = createMockRequest({
-        body: { email: "test@example.com", password: "password123" },
+      const req = new Request(LOGIN_URL, {
+        method: "POST",
+        body: formDataFromObj(mockUser0),
       });
+      const res = await app.fetch(req);
 
-      await loginHandler(request);
-
-      expect(request.set.status).toHaveBeenCalledWith(HttpStatusCode.OK_200);
-      expect(request.cookie.auth.set).toHaveBeenCalled();
-      expect(request.jwt.sign).toHaveBeenCalled();
-      expect(request.hx.redirect).toHaveBeenCalledWith("/admin");
+      expect(res.ok).toBeTrue();
+      expect(res.status).toBe(HttpStatusCode.OK_200);
+      expect(res.headers.get("set-cookie")).toBeTruthy();
+      expect(res.headers.get("hx-redirect")).toEqual("/admin");
+      expect(res.redirected).toBeFalse();
+      expect(res.bodyUsed).toBeFalse();
     });
 
-    it("handles incorrect login credentials", async () => {
-      const request = createMockRequest({
-        body: { email: "wrong@example.com", password: "wrongpassword" },
+    it("handles incorrect credentials", async () => {
+      const incorrectData = formDataFromObj({
+        ...mockUser0,
+        password: "thisisasuperduperextrasuperduperwrongpassword",
       });
+      const res = await app.fetch(
+        new Request(LOGIN_URL, {
+          method: "POST",
+          body: incorrectData,
+        }),
+      );
 
-      await loginHandler(request);
-
-      expect(request.error).toHaveBeenCalledWith(
-        HttpStatusCode.UNPROCESSABLE_ENTITY_422,
-        expect.anything(),
+      expect(res.ok).toBeFalse();
+      expect(res.status).toBe(HttpStatusCode.UNAUTHORIZED_401);
+      expect(res.headers.get("set-cookie")).toBeNull();
+      expect(res.headers.get("hx-redirect")).toBeNull();
+      expect(res.redirected).toBeFalse();
+      expect(await extractResponseBlob(res)).toEqual(
+        IncorrectPasswordException(),
       );
     });
   });
 
   describe("/register", () => {
-    it("successfully registers a new user", async () => {
-      const request = createMockRequest({
-        body: { email: "newuser@example.com", password: "newpassword123" },
-      });
-
-      await registerHandler(request);
-
-      expect(request.set.status).toHaveBeenCalledWith(
-        HttpStatusCode.CREATED_201,
+    const REGISTER_URL = `${AUTH_URL}/register`;
+    it("errors if user already exists", async () => {
+      const res = await app.fetch(
+        new Request(REGISTER_URL, {
+          method: "POST",
+          body: formDataFromObj(mockUser0),
+        }),
       );
-      expect(request.cookie.auth.set).toHaveBeenCalled();
-      expect(request.jwt.sign).toHaveBeenCalled();
-      expect(request.hx.redirect).toHaveBeenCalledWith("/admin");
     });
 
-    it("prevents registration with a duplicate email", async () => {
-      const request = createMockRequest({
-        body: { email: "test@example.com", password: "password123" },
-      });
-
-      await registerHandler(request);
-
-      expect(request.error).toHaveBeenCalledWith(
-        HttpStatusCode.UNPROCESSABLE_ENTITY_422,
-        expect.anything(),
+    it("creates new user", async () => {
+      const res = await app.fetch(
+        new Request(REGISTER_URL, {
+          method: "POST",
+          body: formDataFromObj(mockUser1),
+        }),
       );
+
+      const user = await db
+        .select({ email: users.email, password: users.password })
+        .from(users)
+        .where(eq(users.email, mockUser1.email));
+
+      expect(user.length).toBe(1);
+    });
+
+    it("sends appropriate response on successful registration", async () => {
+      const res = await app.fetch(
+        new Request(REGISTER_URL, {
+          method: "POST",
+          body: formDataFromObj(mockUser1),
+        }),
+      );
+
+      expect(res.ok).toBeTrue();
+      expect(res.status).toBe(HttpStatusCode.CREATED_201);
+      expect(res.headers.get("set-cookie")).toBeTruthy();
+      expect(res.headers.get("hx-redirect")).toEqual("/admin");
+      expect(res.redirected).toBeFalse();
+      expect(res.bodyUsed).toBeFalse();
     });
   });
 
   describe("/logout", () => {
     it("logs out a user", async () => {
-      const request = createMockRequest();
+      const loginRes = await app.fetch(
+        new Request(`${AUTH_URL}/login`, {
+          method: "POST",
+          body: formDataFromObj(mockUser0),
+        }),
+      );
 
-      await logoutHandler(request);
+      expect(loginRes.ok).toBeTrue();
+      expect(loginRes.status).toBe(HttpStatusCode.OK_200);
+      expect(loginRes.headers.get("set-cookie")).toBeTruthy();
+      expect(loginRes.headers.get("hx-redirect")).toEqual("/admin");
+      expect(loginRes.redirected).toBeFalse();
+      expect(loginRes.bodyUsed).toBeFalse();
 
-      expect(request.cookie.auth.remove).toHaveBeenCalled();
-      expect(request.cookie.expiryCookie.remove).toHaveBeenCalled();
-      expect(request.hx.redirect).toHaveBeenCalledWith("/login");
+      const logoutRes = await app.fetch(
+        new Request(`${AUTH_URL}/logout`, {
+          method: "POST",
+        }),
+      );
+
+      expect(logoutRes.ok).toBeTrue();
+      expect(logoutRes.status).toBe(HttpStatusCode.OK_200);
+      expect(logoutRes.headers.get("set-cookie")).toBeNull();
+      expect(logoutRes.headers.get("hx-redirect")).toEqual("/login");
     });
   });
 });

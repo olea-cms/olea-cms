@@ -25,6 +25,7 @@
     "elysia": "latest",
     "elysia-autoload": "^1.1.0",
     "globals": "^15.9.0",
+    "jstransformer-typescript": "^2.0.0",
     "logixlysia": "^3.6.0",
     "pug": "^3.0.3",
     "remeda": "^2.7.0",

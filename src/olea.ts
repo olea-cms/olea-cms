@@ -89,6 +89,13 @@ export const app = new Elysia()
       },
     }),
   )
+  .all("*", async ({ html }) => {
+    try {
+      return html(renderPugFile("index.pug"));
+    } catch (e) {
+      console.log(e);
+    }
+  })
   .use(
     swagger({
       path: "/v1/swagger",
