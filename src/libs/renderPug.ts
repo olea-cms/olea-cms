@@ -11,13 +11,22 @@ export const renderPug = (pugString: string, opts = {}) => {
 
 const heroIconFilter = (
   _childrenText: string,
-  opts = { name: null, size: 6, fill: "currentColor", attrs: {} },
+  opts = {
+    name: null,
+    size: 6,
+    fill: "currentColor",
+    attrs: { class: "" },
+    class: null,
+  },
 ) => {
   if (opts.name)
     return renderPugFile(`components/icons/${opts.name}.pug`, {
       size: opts.size ?? 6,
       fill: opts.fill ?? "currentColor",
-      attrs: opts.attrs ?? {},
+      attrs: {
+        ...opts.attrs,
+        class: opts.class ?? opts.attrs?.class,
+      },
     });
   else return "NO ICON SPECIFIED";
 };

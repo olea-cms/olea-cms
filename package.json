@@ -15,6 +15,7 @@
     "@elysiajs/static": "^1.1.0",
     "@elysiajs/swagger": "^1.1.0",
     "@eslint/js": "^9.8.0",
+    "@gtrabanco/elysia-hmr-html": "1.1.0",
     "@gtramontina.com/elysia-htmx": "2.0.0",
     "@gtramontina.com/elysia-tailwind": "2.0.0",
     "@opentelemetry/auto-instrumentations-node": "^0.49.0",

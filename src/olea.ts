@@ -8,6 +8,7 @@ import { opentelemetry } from "@elysiajs/opentelemetry";
 import logixlysia from "logixlysia";
 import { autoload } from "elysia-autoload";
 import jwt from "@elysiajs/jwt";
+import { hmr } from "@gtrabanco/elysia-hmr-html";
 
 import { renderFile } from "pug";
 
@@ -15,13 +16,20 @@ import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import { renderPug, renderPugFile } from "./libs/renderPug";
 
+// @ts-expect-error
 import.meta.env.PROD = import.meta.env.NODE_ENV === "production";
+// @ts-expect-error
 import.meta.env.DEV = !import.meta.env.PROD;
 
 export const renderCatastrophic = (env = {}) =>
   renderFile(`${import.meta.dir}/components/catastrophic-error.pug`, env);
 
 export const app = new Elysia()
+  .use(
+    hmr({
+      prefixToWatch: `${import.meta.dir}/pages`,
+    }),
+  )
   .use(
     opentelemetry({
       traceExporter: new OTLPTraceExporter(),

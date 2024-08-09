@@ -1,0 +1,92 @@
+#adminDash.min-h-full
+  // include ../components/admin-menubar.pug
+  .p-4.space-y-4
+    // Search Bar
+    label.input.input-bordered.flex.items-center.gap-2(class='md:hidden md:w-full')
+      input.grow(type='text' placeholder='Search...')
+      :hero-icon(name='magnifying-glass' size=4)
+
+    // Quick Actions
+    .flex.flex-col.gap-4
+      .flex.gap-4.py-1.pb-4.masked-overflow(class='md:grid md:grid-cols-3 -mx-4')
+        .card.bg-base-100.shadow-xl.ring-1.ring-primary-content.cursor-pointer.ml-4(class='hover:ring-accent md:card-side')
+          figure.pl-8.w-52
+            .flex.pt-8(class='md:pt-12 md:pb-8')
+              :hero-icon(name='document' size=20)
+              :hero-icon(name='plus')
+          .card-body.pb-8
+            h2.card-title Page
+            p.hidden(class='md:flex') Static, standalone content that does not frequently change.
+        .card.bg-base-100.shadow-xl.ring-1.ring-primary-content.cursor-pointer(class='hover:ring-accent md:card-side')
+          figure.pl-8.w-52
+            .flex.pt-8(class='md:pt-12 md:pb-8')
+              :hero-icon(name='newspaper' size=20)
+              :hero-icon(name='plus')
+          .card-body.pb-8
+            h2.card-title Post
+            p.hidden(class='md:flex') Dynamic content, time sensitive, or regularly updated information.
+        .card.bg-base-100.shadow-xl.ring-1.ring-primary-content.cursor-pointer.mr-4(class='hover:ring-accent md:card-side')
+          figure.pl-8.w-52
+            .flex.pt-8(class='md:pt-12 md:pb-8')
+              :hero-icon(name='briefcase' size=20)
+              :hero-icon(name='plus')
+          .card-body.pb-8
+            h2.card-title Portfolio
+            p.hidden(class='md:flex') Showcase of personal work, projects, or achievements.
+
+    .grid.grid-cols-1.gap-4(class='md:grid-cols-2')
+      // System health
+      .card.bg-base-100.shadow-xl.ring-1.ring-primary
+        .card-body
+          h2.card-title System Health
+          p.text-sm Current server status and performance indicators.
+          ul
+            li Server uptime: 99.9%
+            li Average load time: 1.2s
+
+      // Recent Activity
+      .card.bg-base-100.shadow-xl.ring-1.ring-primary
+        .card-body
+          h2.card-title Recent Activity
+          ul
+            li Recent post published: "How to Boost SEO"
+            li Comment by user123 on "Portfolio Update"
+            li New page created: "About Us"
+
+    // Dashboard Cards
+    .grid.grid-cols-1.gap-4(class='md:grid-cols-5')
+      .card.bg-base-100.shadow-xl.ring-1.ring-primary
+        .card-body
+          h2.card-title Traffic
+          p.text-sm Overview of visitor statistics and page views.
+          canvas#trafficChart
+
+      .card.bg-base-100.shadow-xl.ring-1.ring-primary
+        .card-body
+          h2.card-title Engagement
+          p.text-sm Summary of user interactions and content performance.
+          canvas#engagementChart
+
+      .card.bg-base-100.shadow-xl.ring-1.ring-primary
+        .card-body
+          h2.card-title SEO/Conversions
+          p.text-sm Key SEO metrics and conversion rates.
+          canvas#seoChart
+
+      // User Feedback
+      .card.bg-base-100.shadow-xl.ring-1.ring-primary
+        .card-body
+          h2.card-title User Feedback
+          p.text-sm Summary of user comments and feedback trends.
+          ul
+            li Positive sentiment: 85%
+            li Negative feedback: 5%
+
+      // Social Media
+      .card.bg-base-100.shadow-xl.ring-1.ring-primary
+        .card-body
+          h2.card-title Social Media Mentions
+          p.text-sm Overview of mentions and interactions from social platforms.
+          ul
+            li Twitter: 150 mentions
+            li Facebook: 200 shares

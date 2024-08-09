@@ -1,5 +1,5 @@
 doctype html
-html.h-full.min-h-full.bg-base-200
+html.h-dvh.min-h-full.bg-base-200
   head
     meta(charset='UTF-8')
     link(rel='icon' type='image/svg+xml' href='/public/logo-circle-wrap-text.png')
@@ -39,15 +39,15 @@ html.h-full.min-h-full.bg-base-200
 
 
   // we have to set x-data for pinecone router
-  body.bg-base-200.h-fit.min-h-full.pb-4(x-data='router()' hx-ext='loading-states, alpine-morph' hx-swap='morph')
+  body.bg-base-200.h-fit.min-h-full(x-data='router()' hx-ext='loading-states, alpine-morph' hx-swap='morph')
     #catastrophicError
     include components/navbar
-    include components/admin-navbar
 
-    #app(class='min-h-[calc(100vh-80px)] h-[calc(100vh-80px)]')
+    //#app(class='min-h-[calc(100vh-80px)] h-[calc(100vh-80px)]')
+    #app.pt-16.h-dvh
 
     // routes
-    +route('/admin', 'authHandler', '/admin/template')
+    +route('/admin', 'authHandler', '/admin/dashboard')
     +route('')
       include pages/home
     +route('/login', 'authHandler')

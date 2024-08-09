@@ -44,3 +44,26 @@
     transform: rotate(360deg);
   }
 }
+
+/* Custom class to apply left and right mask effect */
+.masked-overflow {
+  --mask-width: 32px; /* Fade distance */
+  --mask-height: 8px; /* Scrollbar height (for horizontal scrolling) */
+
+  @apply overflow-x-auto; /* Tailwind utilities */
+
+  /* Linear gradient mask fading on left and right sides */
+  --mask-image-content: linear-gradient(
+    to right,
+    transparent,
+    black var(--mask-width),
+    black calc(100% - var(--mask-width)),
+    transparent
+  );
+
+  /* Apply mask to the entire content */
+  mask-image: var(--mask-image-content);
+  mask-size: 100% calc(100% - var(--mask-height)); /* Adjust height for scrollbar */
+  mask-position: 0 0;
+  mask-repeat: no-repeat;
+}
