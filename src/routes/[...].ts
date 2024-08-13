@@ -1,8 +1,7 @@
-import { renderFile } from "pug";
-import type { ElysiaApp } from "../olea";
+import type { Olea } from "../olea";
 import { renderPugFile } from "../libs/renderPug";
 
-export default (app: ElysiaApp) =>
+export default (app: Olea) =>
   app.all("*", async ({ html }) => {
     try {
       return html(renderPugFile("index.pug"));

@@ -33,12 +33,25 @@ const heroIconFilter = (
 
 // path relative to src
 export const renderPugFile = (path: string, opts = {}) => {
-  return renderFile(`${import.meta.dir}/../${path}`, {
-    ...import.meta.env,
-    dynamicInclude,
-    filters: {
-      "hero-icon": heroIconFilter,
-    },
-    ...opts,
-  });
+  /**
+   * Utility class for rendering pug files with the proper environment/variables
+   *
+   * @param path - Path to pug file relative to src
+   * @param opts - Additional options to pass to the pug renderFile function
+   *
+   * @returns A rendered html string from the provided pug file
+   */
+  try {
+    return renderFile(`${import.meta.dir}/../${path}`, {
+      ...import.meta.env,
+      dynamicInclude,
+      filters: {
+        "hero-icon": heroIconFilter,
+      },
+      ...opts,
+    });
+  } catch (err) {
+    console.error(`[renderPugFile]: ${err}`);
+    return `[renderPugFile]: ${err}`;
+  }
 };

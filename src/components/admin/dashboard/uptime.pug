@@ -1,0 +1,26 @@
+span.text-success(x-data=`{
+  initTime: new Date('${INIT_TIME}'),
+  elapsedSeconds: 0,
+  uptime: new Date('${INIT_TIME}').toISOString(),
+  init() {
+    this.uptime = this.formatTime(0);
+    this.updateElapsedTime();
+    setInterval(() => {
+      this.updateElapsedTime();
+    }, 1000);
+  },
+  updateElapsedTime() {
+    const now = new Date();
+    this.elapsedSeconds = Math.floor((now - this.initTime) / 1000); // elapsed time in seconds
+    this.uptime = this.formatTime(this.elapsedSeconds);
+  },
+  formatTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return \`\${this.pad(hours)}h:\${this.pad(minutes)}m:\${this.pad(secs)}s\`;
+  },
+  pad(number) {
+    return number < 10 ? '0' + number : number;
+  }
+}`) #{INIT_TIME_FORMATTED} (#[span(x-text='uptime')])

@@ -3,7 +3,6 @@ import { db } from "../db";
 import { users } from "../schema";
 import { NewUser, User } from "../models/user";
 import { omit } from "remeda";
-import { password } from "bun";
 
 export const UsersService = {
   createUser: async (newUser: NewUser): Promise<User> => {

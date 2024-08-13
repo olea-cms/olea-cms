@@ -36,13 +36,59 @@
 
     .grid.grid-cols-1.gap-4(class='md:grid-cols-2')
       // System health
+      //- .card.bg-base-100.shadow-xl.ring-1.ring-primary
+      //-   .card-body
+      //-     h2.card-title System Health
+      //-     p.text-sm Current server status and performance indicators.
+      //-     ul
+      //-       li Server uptime: 99.9%
+      //-       li Average load time: 1.2s// System health
       .card.bg-base-100.shadow-xl.ring-1.ring-primary
         .card-body
           h2.card-title System Health
           p.text-sm Current server status and performance indicators.
           ul
-            li Server uptime: 99.9%
-            li Average load time: 1.2s
+            li
+              // #{"Instance up since: "}
+              //- span(hx-get='/components/admin/uptime' hx-swap='outerHTML' hx-trigger='load')
+              //- include ../components/admin/dashboard/uptime.pug
+              .stats.stats-vertical.shadow
+                .stat.px-0(x-data=`{
+  initTime: new Date('${INIT_TIME}'),
+  elapsedSeconds: 0,
+  uptime: new Date('${INIT_TIME}').toISOString(),
+  init() {
+    this.uptime = this.formatTime(0);
+    this.updateElapsedTime();
+    setInterval(() => {
+      this.updateElapsedTime();
+    }, 1000);
+  },
+  updateElapsedTime() {
+    const now = new Date();
+    this.elapsedSeconds = Math.floor((now - this.initTime) / 1000); // elapsed time in seconds
+    this.uptime = this.formatTime(this.elapsedSeconds);
+  },
+  formatTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return \`\${this.pad(hours)}h:\${this.pad(minutes)}m:\${this.pad(secs)}s\`;
+  },
+  pad(number) {
+    return number < 10 ? '0' + number : number;
+  }
+}`)
+                  .stat-title System Uptime
+                  .stat-value(x-text='uptime')
+                  .stat-desc Up since #{INIT_TIME_FORMATTED}
+                .stat.px-0(hx-ext='ws' ws-connect='/admin/sys-health/avg-response-time')
+                  .stat-title Average Response Time
+                  .stat-value#avg-response-time
+                  .stat-desc &#x2191; Min: #[span#min-response-time] &#x2193; Max: #[span#max-response-time]
+
+            //- li Average load time: 1.2s
+
 
       // Recent Activity
       .card.bg-base-100.shadow-xl.ring-1.ring-primary

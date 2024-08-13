@@ -3,7 +3,9 @@
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "NODE_ENV=dev bunx nodemon -e ts,pug,css --exec 'bun run src/olea.ts'",
+    "dev:old": "NODE_ENV=dev bunx --bun nodemon -e ts,pug,css --exec 'bun run src/olea.ts'",
+    "dev": "pm2 start ecosystem.config.js",
+    "dev:kill": "pm2 delete all",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio --verbose"
@@ -28,6 +30,8 @@
     "globals": "^15.9.0",
     "jstransformer-typescript": "^2.0.0",
     "logixlysia": "^3.6.0",
+    "openapi-types": "^12.1.3",
+    "pm2": "^5.4.2",
     "pug": "^3.0.3",
     "remeda": "^2.7.0",
     "type-fest": "^4.23.0",

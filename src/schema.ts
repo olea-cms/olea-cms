@@ -35,7 +35,10 @@ export const content = sqliteTable("content", {
   type: text("type").notNull().$type<"page" | "post" | "portfolio">(),
   content: text("content").notNull(),
   createdAt: int("created_at").notNull().$defaultFn(Date.now),
-  updatedAt: int("updated_at").notNull().$defaultFn(Date.now),
+  updatedAt: int("updated_at")
+    .notNull()
+    .$defaultFn(Date.now)
+    .$onUpdateFn(Date.now),
 });
 
 export const contentVersions = sqliteTable("content_versions", {
@@ -47,4 +50,11 @@ export const contentVersions = sqliteTable("content_versions", {
   title: text("text").notNull(),
   content: text("content").notNull(),
   createdAt: int("created_at").notNull().$defaultFn(Date.now),
+});
+
+export const avgResponseTimes = sqliteTable("avg_response_times", {
+  route: text("route").primaryKey().notNull(),
+  numRequests: int("num_requests").notNull().default(0),
+  avgResponseTime: int("avg_response_time").notNull().default(0),
+  updatedAt: int("updated_at").$defaultFn(Date.now).$onUpdateFn(Date.now),
 });

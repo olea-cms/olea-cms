@@ -1,5 +1,4 @@
 // routes/index.ts
-import { renderFile } from "pug";
 import type { ElysiaApp } from "../olea";
 import { renderPugFile } from "../libs/renderPug";
 

@@ -39,7 +39,7 @@ html.h-dvh.min-h-full.bg-base-200
 
 
   // we have to set x-data for pinecone router
-  body.bg-base-200.h-fit.min-h-full(x-data='router()' hx-ext='loading-states, alpine-morph' hx-swap='morph')
+  body.bg-base-200.h-fit.min-h-full(x-data='router()' hx-ext='loading-states, alpine-morph, ws' hx-swap='morph')
     #catastrophicError
     include components/navbar
 
@@ -47,7 +47,7 @@ html.h-dvh.min-h-full.bg-base-200
     #app.pt-16.h-dvh
 
     // routes
-    +route('/admin', 'authHandler', '/admin/dashboard')
+    +route('/admin', 'authHandler', '/pages/admin/dashboard')
     +route('')
       include pages/home
     +route('/login', 'authHandler')

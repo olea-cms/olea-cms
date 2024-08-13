@@ -3,7 +3,7 @@ interface Window {
   NProgress: any;
 }
 
-// htmx.logAll();
+htmx.logAll();
 
 const startProgress = () => window.NProgress.start();
 const endProgress = () => window.NProgress.done();
@@ -23,6 +23,7 @@ document.addEventListener("pinecone-start", ({ target }: any) => {
 });
 document.addEventListener("pinecone-end", () => {
   endProgress();
+  htmx.process(document.documentElement);
 });
 document.addEventListener("fetch-error", (err) => console.error(err));
 // enable swapping into the catastrophicError element when
@@ -34,6 +35,10 @@ document.addEventListener("fetch-error", (err) => console.error(err));
 //     detail.shouldSwap = true;
 //     detail.isError = true;
 //   }
+// });
+// document.addEventListener("htmx:afterSwap", ({ detail }: any) => {
+//   console.log("htmx afterSettle");
+//   htmx.process(document.documentElement);
 // });
 
 // Helper function to get cookies
@@ -56,7 +61,7 @@ const router = () => ({
 
     // Check if auth flag or expiry exist, otherwise redirect
     if (isExpired() && !onAuthPage) {
-      context.redirect("/");
+      context.redirect("/login");
       return "stop";
     }
 

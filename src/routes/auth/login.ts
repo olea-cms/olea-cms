@@ -1,17 +1,33 @@
-import HttpStatusCode from "../../common/statusCodes";
 import { TNewUser } from "../../models/user";
-import { ElysiaApp } from "../../olea";
-import { UsersService } from "../../services/users";
-import { IncorrectPasswordException } from "../../exceptions/incorrectPassword";
-import { UserNotFoundException } from "../../exceptions/userNotFound";
-import { tomorrow } from "../../libs/datetime";
+import { Olea } from "../../olea";
 import { t } from "elysia";
-import { LOCALSTORAGE_AUTH_KEY } from "../../common/constants";
 
-export default (app: ElysiaApp) =>
+import { AuthService } from "../../services/auth";
+import HttpStatusCode from "../../common/statusCodes";
+import { UserNotFoundException } from "../../exceptions/userNotFound";
+import { generateDetail } from "../../libs/describeHtmlResponse";
+import { IncorrectPasswordException } from "../../exceptions/incorrectPassword";
+
+export default (app: Olea) =>
   app
     .guard({
       body: t.Omit(TNewUser, ["settings"]),
+      detail: generateDetail("Login a user", {
+        [HttpStatusCode.OK_200]: {
+          description: "User logged in",
+          headers: {
+            "hx-redirect": "/admin",
+          },
+        },
+        [HttpStatusCode.UNPROCESSABLE_ENTITY_422]: {
+          description: "User not found",
+          body: UserNotFoundException(),
+        },
+        [HttpStatusCode.UNAUTHORIZED_401]: {
+          description: "Incorrect password",
+          body: IncorrectPasswordException(),
+        },
+      }),
     })
     .post(
       "/",
@@ -19,63 +35,19 @@ export default (app: ElysiaApp) =>
         body,
         set,
         jwt,
-        cookie: { auth, [LOCALSTORAGE_AUTH_KEY]: expiryCookie },
+        //         cookie: { auth, [LOCALSTORAGE_AUTH_KEY]: expiryCookie },
+        cookie,
         hx,
         error,
       }) => {
-        console.log("logging in", { body });
-        const matchingUser = await UsersService.getUserByEmail(body.email, {
-          withPwd: true,
-        });
-
-        if (!matchingUser)
-          return error(
-            HttpStatusCode.UNPROCESSABLE_ENTITY_422,
-            UserNotFoundException(),
-          );
-
-        const passwordIsMatch = await Bun.password.verify(
+        await AuthService.login(
+          body.email,
           body.password,
-          matchingUser.password!,
+          error,
+          jwt,
+          cookie,
+          hx,
         );
-
-        if (!passwordIsMatch) {
-          return error(
-            HttpStatusCode.UNAUTHORIZED_401,
-            IncorrectPasswordException(),
-          );
-        }
-        const token = await jwt.sign({
-          id: matchingUser.id,
-          email: matchingUser.email,
-        });
-
-        const expires = import.meta.env.DEV
-          ? new Date(new Date().getTime() + 15 * 60000)
-          : tomorrow();
-        const maxAge = 60 * (import.meta.env.DEV ? 15 : 1440); // 15 mins for dev, 1 day for prod
-        console.log({ prod: import.meta.env.PROD });
-
-        auth.set({
-          path: "/",
-          value: token,
-          httpOnly: true,
-          secure: true,
-          sameSite: "strict",
-          // expires,
-          maxAge,
-        });
-        expiryCookie.set({
-          path: "/",
-          value: expires.getTime(),
-          httpOnly: false,
-          secure: true,
-          sameSite: "strict",
-          // expires,
-          maxAge,
-        });
-
         set.status = HttpStatusCode.OK_200;
-        hx.redirect("/admin");
       },
     );

@@ -12,6 +12,11 @@
   display: none !important;
 }
 
+/* hide htmx loading-states extension elements */
+[data-loading] {
+  display: none;
+}
+
 /* nrpogress */
 /* Extracted progress bar styles */
 #nprogress {

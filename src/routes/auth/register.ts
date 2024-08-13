@@ -1,13 +1,13 @@
 import HttpStatusCode from "../../common/statusCodes";
 import { TNewUser } from "../../models/user";
-import { ElysiaApp } from "../../olea";
+import { Olea } from "../../olea";
 import { UsersService } from "../../services/users";
 import { tomorrow } from "../../libs/datetime";
 import { t } from "elysia";
 import { UserAlreadyExistsException } from "../../exceptions/userAlreadyExists";
 import { LOCALSTORAGE_AUTH_KEY } from "../../common/constants";
 
-export default (app: ElysiaApp) =>
+export default (app: Olea) =>
   app
     .guard({
       body: t.Omit(TNewUser, ["settings"]),

@@ -8,6 +8,13 @@
       "when": 1722786335029,
       "tag": "0000_amusing_mercury",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1723551604874,
+      "tag": "0001_freezing_nightmare",
+      "breakpoints": true
     }
   ]
 }
